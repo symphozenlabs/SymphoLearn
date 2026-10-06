@@ -1,0 +1,463 @@
+@import 'tailwindcss';
+
+/* ──────────────────────────────────────────────────────────────
+   SYMPHOLEARN DESIGN SYSTEM
+   The SymphoZen Labs brand, token for token (verified against
+   symphozen.com's own :root): warm paper, ink, sage green ·
+   Playfair Display 500 + Inter · hairline borders · long soft
+   shadows · ease-out cubic-bezier(.22, 1, .36, 1).
+   Colours outside this palette are not used anywhere.
+   ────────────────────────────────────────────────────────────── */
+
+:root {
+	/* — Brand palette (SymphoZen Labs) — */
+	--green-50: #f5f8f3;
+	--green-100: #edf4e9;
+	--green-300: #b8cea9;
+	--green-600: #5a8a45;
+	--green-700: #4d783b;
+
+	--paper: #fcfcfa;
+	--paper-soft: #f4f5f1;
+	--warm-100: #f3efe7;
+	--gray-50: #f7f8f5;
+	--gray-100: #f0f1ee;
+	--gray-200: #e5e7e2;
+	--gray-300: #d3d6cf;
+	--gray-500: #90948c; /* brand "text-faint" */
+	--gray-600: #646464;
+	--gray-700: #525252;
+	--gray-900: #303030; /* charcoal */
+	--gray-950: #242424;
+	--ink: #171916; /* dark surfaces */
+	--logo-charcoal: #3a3a3a; /* the wordmark */
+
+	/* — Semantic tokens — */
+	--brand-primary: var(--green-600);
+	--brand-primary-hover: var(--green-700);
+	--brand-secondary: var(--ink);
+	--brand-accent: var(--green-300);
+	--brand-faint: var(--green-100);
+
+	--background: var(--paper);
+	--surface: #ffffff;
+	--surface-soft: var(--paper-soft);
+	--surface-warm: var(--warm-100);
+	--surface-elevated: #ffffff;
+	--surface-inverse: var(--ink);
+
+	--text-primary: var(--gray-950);
+	--text-strong: var(--gray-950);
+	--text-secondary: var(--gray-600);
+	--text-muted: var(--gray-500);
+	--text-inverse: #ffffff;
+	--text-inverse-muted: rgb(255 255 255 / 0.56);
+	--text-inverse-faint: rgb(255 255 255 / 0.34);
+
+	--border: var(--gray-200);
+	--border-strong: var(--gray-300);
+	--border-inverse: rgb(255 255 255 / 0.1);
+
+	--success: var(--green-600);
+	--warning: #b7832f;
+	--error: #b5483b;
+
+	/* — Typography — */
+	--font-display: 'Playfair Display', Georgia, serif;
+	--font-body: 'Inter', system-ui, sans-serif;
+
+	--fs-display: clamp(3rem, 8.4vw, 8.25rem);
+	--fs-h1: clamp(2.5rem, 5.6vw, 5rem);
+	--fs-h2: clamp(2rem, 3.8vw, 3.4rem);
+	--fs-h3: clamp(1.35rem, 1.9vw, 1.75rem);
+	--fs-body-lg: 1.125rem;
+	--fs-body: 1rem;
+	--fs-small: 0.875rem;
+	--fs-caption: 0.6875rem;
+
+	/* as on symphozen.com: display headings −0.035em at 1.04 line height,
+	   small headings −0.02em, eyebrows uppercase +0.19em */
+	--tracking-display: -0.035em;
+	--tracking-tight: -0.035em;
+	--tracking-label: 0.19em;
+	--leading-display: 1.04;
+
+	/* — Spacing (4px base) — */
+	--space-1: 0.25rem;
+	--space-2: 0.5rem;
+	--space-3: 0.75rem;
+	--space-4: 1rem;
+	--space-6: 1.5rem;
+	--space-8: 2rem;
+	--space-12: 3rem;
+	--space-16: 4rem;
+	--space-24: 6rem;
+	--space-32: 8rem;
+	--section-space: clamp(5rem, 11vw, 10rem);
+	--gutter: clamp(1.15rem, 4vw, 3rem);
+	--container: 84rem;
+
+	/* — Radius — brand values (sm, md, card, button); lg/xl are the
+	   learning product's softer card shapes — */
+	--radius-card: 0.35rem;
+	--button-radius: 0.3rem;
+	--radius-sm: 0.55rem;
+	--radius-md: 0.8rem;
+	--radius-lg: 1.25rem;
+	--radius-xl: 1.75rem;
+	--radius-pill: 999px;
+
+	/* — Shadows (long + soft, ink-tinted) — */
+	--shadow-subtle: 0 1px 2px rgb(36 36 36 / 0.035);
+	--shadow-soft: 0 20px 60px rgb(36 36 36 / 0.07);
+	--shadow-elevated: 0 30px 90px rgb(24 25 22 / 0.11);
+	--shadow-hero: 0 45px 110px rgb(24 25 22 / 0.18);
+
+	/* — Motion — */
+	--ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+	--ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+	--duration-fast: 160ms; /* micro interaction */
+	--duration-normal: 260ms; /* hover */
+	--duration-slow: 650ms; /* reveal / page */
+	--duration-page: 420ms; /* page transition */
+
+	--nav-height: 4.5rem;
+
+	--noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cfilter id='a'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.34' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23a)' opacity='0.2'/%3E%3C/svg%3E");
+}
+
+/* Tailwind theme bridge — utilities resolve to the same tokens */
+@theme inline {
+	--color-brand: var(--brand-primary);
+	--color-brand-hover: var(--brand-primary-hover);
+	--color-brand-soft: var(--brand-accent);
+	--color-brand-faint: var(--brand-faint);
+	--color-ink: var(--ink);
+	--color-paper: var(--paper);
+	--color-paper-soft: var(--paper-soft);
+	--color-warm: var(--warm-100);
+	--color-surface: var(--surface);
+	--color-line: var(--border);
+	--color-line-strong: var(--border-strong);
+	--color-fg: var(--text-primary);
+	--color-fg-2: var(--text-secondary);
+	--color-fg-3: var(--text-muted);
+	--font-display: var(--font-display);
+	--font-sans: var(--font-body);
+	--ease-brand: var(--ease-out);
+	--radius-card: var(--radius-md);
+}
+
+/* ── Base ─────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html {
+	-webkit-text-size-adjust: 100%;
+	text-rendering: optimizeLegibility;
+}
+
+body {
+	margin: 0;
+	background: var(--background);
+	color: var(--text-primary);
+	font-family: var(--font-body);
+	font-size: var(--fs-body);
+	line-height: 1.6;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	overflow-x: clip;
+}
+
+::selection {
+	background: var(--green-300);
+	color: var(--ink);
+}
+
+img,
+video,
+svg {
+	display: block;
+	max-width: 100%;
+}
+
+button {
+	font: inherit;
+	color: inherit;
+	cursor: pointer;
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4 {
+	margin: 0;
+	font-weight: 500;
+	color: var(--text-strong);
+}
+
+p {
+	margin: 0;
+}
+
+:focus-visible {
+	outline: 2px solid var(--brand-primary);
+	outline-offset: 3px;
+	border-radius: var(--radius-sm);
+}
+
+/* ── Typographic primitives ───────────────────────────────── */
+.t-display {
+	font-family: var(--font-display);
+	font-size: var(--fs-display);
+	font-weight: 500;
+	line-height: var(--leading-display);
+	letter-spacing: var(--tracking-display);
+}
+.t-h1 {
+	font-family: var(--font-display);
+	font-size: var(--fs-h1);
+	font-weight: 500;
+	line-height: var(--leading-display);
+	letter-spacing: var(--tracking-display);
+}
+.t-h2 {
+	font-family: var(--font-display);
+	font-size: var(--fs-h2);
+	font-weight: 500;
+	line-height: var(--leading-display);
+	letter-spacing: var(--tracking-tight);
+}
+.t-h3 {
+	font-family: var(--font-body);
+	font-size: var(--fs-h3);
+	font-weight: 560;
+	line-height: 1.25;
+	letter-spacing: -0.02em;
+}
+.t-body-lg {
+	font-size: var(--fs-body-lg);
+	line-height: 1.65;
+	color: var(--text-secondary);
+}
+.t-small {
+	font-size: var(--fs-small);
+	line-height: 1.55;
+}
+/* small meta labels — uppercase and tracked, as on symphozen.com */
+.t-label {
+	font-size: 0.68rem;
+	font-weight: 600;
+	line-height: 1.4;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--text-muted);
+}
+
+/* Section eyebrow — the brand's green, uppercase, widely tracked kicker */
+.eyebrow {
+	display: inline-flex;
+	align-items: center;
+	width: fit-content;
+	color: var(--green-600);
+	font-size: 0.66rem;
+	font-weight: 650;
+	line-height: 1.2;
+	letter-spacing: var(--tracking-label);
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+.eyebrow.on-dark {
+	color: var(--green-300);
+}
+.t-num {
+	font-family: var(--font-display);
+	font-variant-numeric: lining-nums tabular-nums;
+}
+.italic-accent {
+	font-style: italic;
+	color: var(--brand-primary);
+}
+
+/* ── Layout primitives ────────────────────────────────────── */
+.container-x {
+	width: 100%;
+	max-width: var(--container);
+	margin-inline: auto;
+	padding-inline: var(--gutter);
+}
+
+.editorial-grid {
+	display: grid;
+	grid-template-columns: repeat(12, minmax(0, 1fr));
+	column-gap: clamp(1rem, 2.4vw, 2rem);
+}
+
+.hairline {
+	height: 1px;
+	background: var(--border);
+	border: 0;
+}
+
+.noise::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background-image: var(--noise);
+	opacity: 0.35;
+	pointer-events: none;
+	mix-blend-mode: multiply;
+}
+
+.sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+.skip-link {
+	position: fixed;
+	top: 0.75rem;
+	left: 0.75rem;
+	z-index: 100;
+	padding: 0.6rem 1rem;
+	background: var(--ink);
+	color: #fff;
+	border-radius: var(--radius-md);
+	font-size: var(--fs-small);
+	transform: translateY(-160%);
+	transition: transform var(--duration-normal) var(--ease-out);
+}
+.skip-link:focus {
+	transform: none;
+}
+
+/* [data-reveal] elements are animated in by the `reveal` action — a short rise that
+   finishes as they enter, so content never visibly sits below its place */
+html.js [data-reveal]:not([data-revealed]) {
+	opacity: 0;
+	transform: translate3d(0, 14px, 0);
+}
+
+/* see +layout.svelte — hover lifts pause while the page scrolls */
+html.is-scrolling :where(.card, .tile, .now-media) {
+	pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		scroll-behavior: auto !important;
+		transition-duration: 120ms !important;
+	}
+	html.js [data-reveal] {
+		transform: none;
+	}
+}
+
+/* ── Forms (auth, enrollment) ─────────────────────────────── */
+.ink-link {
+	color: var(--ink);
+	font-weight: 500;
+	text-decoration: underline;
+	text-decoration-color: var(--green-300);
+	text-decoration-thickness: 1.5px;
+	text-underline-offset: 3px;
+	transition: text-decoration-color var(--duration-normal);
+}
+.ink-link:hover {
+	text-decoration-color: var(--brand-primary);
+}
+
+/* custom checkbox: <label class="check"><input type="checkbox"><span class="box"></span>Text</label> */
+.check {
+	position: relative;
+	display: inline-flex;
+	align-items: flex-start;
+	gap: 0.6rem;
+	font-size: 0.86rem;
+	line-height: 1.45;
+	color: var(--text-secondary);
+	cursor: pointer;
+}
+.check input {
+	position: absolute;
+	opacity: 0;
+	width: 1.1rem;
+	height: 1.1rem;
+	margin: 0;
+}
+.check .box {
+	flex: none;
+	width: 1.1rem;
+	height: 1.1rem;
+	margin-top: 0.05rem;
+	border: 1px solid var(--border-strong);
+	border-radius: 0.3rem;
+	background: var(--surface) center / 0.7rem no-repeat;
+	transition:
+		background-color var(--duration-fast) var(--ease-out),
+		border-color var(--duration-fast) var(--ease-out);
+}
+.check input:checked + .box {
+	background-color: var(--brand-primary);
+	border-color: var(--brand-primary);
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 6.2 5 8.5l4.5-5' fill='none' stroke='white' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+.check input:focus-visible + .box {
+	outline: 2px solid var(--brand-primary);
+	outline-offset: 2px;
+}
+.check.invalid .box {
+	border-color: var(--error);
+}
+
+/* the primary form action */
+.submit {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.6rem;
+	width: 100%;
+	height: 3.25rem;
+	margin-top: 0.4rem;
+	border: 0;
+	border-radius: var(--button-radius);
+	background: var(--brand-primary);
+	color: #fff;
+	font-size: 0.82rem;
+	font-weight: 650;
+	box-shadow: 0 10px 30px rgb(90 138 69 / 0.2);
+	transition:
+		background var(--duration-normal) var(--ease-out),
+		transform var(--duration-fast) var(--ease-out),
+		box-shadow var(--duration-normal) var(--ease-out);
+}
+.submit:hover:not(:disabled) {
+	background: var(--brand-primary-hover);
+	box-shadow: 0 14px 34px rgb(90 138 69 / 0.3);
+}
+.submit:active:not(:disabled) {
+	transform: scale(0.985);
+}
+.submit:disabled {
+	opacity: 0.75;
+	cursor: progress;
+}

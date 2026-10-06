@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
+<rect width="1600" height="1000" fill="#171916"/>
+<defs><radialGradient id="l" cx="0.62" cy="0.36" r="0.55"><stop offset="0" stop-color="#f3efe7" stop-opacity="0.95"/><stop offset="0.45" stop-color="#b8cea9" stop-opacity="0.25"/><stop offset="1" stop-color="#171916" stop-opacity="0"/></radialGradient></defs>
+<polygon points="760,0 1180,0 1500,1000 820,1000" fill="url(#l)"/>
+<rect x="440" y="180" width="300" height="420" fill="none" stroke="#4a5046" stroke-width="2"/>
+<line x1="590" y1="180" x2="590" y2="600" stroke="#4a5046" stroke-width="2"/>
+<line x1="440" y1="390" x2="740" y2="390" stroke="#4a5046" stroke-width="2"/>
+<circle cx="1040" cy="620" r="70" fill="#f3efe7"/>
+</svg>

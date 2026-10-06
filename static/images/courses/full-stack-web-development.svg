@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
+<rect width="1600" height="1000" fill="#171916"/>
+<g opacity="0.5"><line x1="200" y1="0" x2="200" y2="1000" stroke="#2a2e27" stroke-width="1"/><line x1="400" y1="0" x2="400" y2="1000" stroke="#2a2e27" stroke-width="1"/><line x1="600" y1="0" x2="600" y2="1000" stroke="#2a2e27" stroke-width="1"/><line x1="800" y1="0" x2="800" y2="1000" stroke="#2a2e27" stroke-width="1"/><line x1="1000" y1="0" x2="1000" y2="1000" stroke="#2a2e27" stroke-width="1"/><line x1="1200" y1="0" x2="1200" y2="1000" stroke="#2a2e27" stroke-width="1"/><line x1="1400" y1="0" x2="1400" y2="1000" stroke="#2a2e27" stroke-width="1"/><line x1="0" y1="200" x2="1600" y2="200" stroke="#2a2e27" stroke-width="1"/><line x1="0" y1="400" x2="1600" y2="400" stroke="#2a2e27" stroke-width="1"/><line x1="0" y1="600" x2="1600" y2="600" stroke="#2a2e27" stroke-width="1"/><line x1="0" y1="800" x2="1600" y2="800" stroke="#2a2e27" stroke-width="1"/></g>
+<path d="M800 420 L1180 610 L800 800 L420 610 Z" fill="#22261f" stroke="#3a3f37" stroke-width="2"/>
+<path d="M800 290 L1180 480 L800 670 L420 480 Z" fill="#1d201b" stroke="#4a5046" stroke-width="2"/>
+<path d="M800 160 L1180 350 L800 540 L420 350 Z" fill="#262a23" stroke="#6f9d59" stroke-width="2"/>
+<circle cx="800" cy="350" r="12" fill="#b8cea9"/>
+<line x1="800" y1="350" x2="800" y2="740" stroke="#5a8a45" stroke-width="2" stroke-dasharray="4 10"/>
+<circle cx="800" cy="740" r="6" fill="#5a8a45"/>
+</svg>
