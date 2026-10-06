@@ -1,0 +1,40 @@
+{
+	"$schema": "https://openapi.vercel.sh/vercel.json",
+	"services": {
+		"app": {
+			"root": ".",
+			"framework": "sveltekit-1",
+			"outputDirectory": "build",
+			"cleanUrls": true,
+			"trailingSlash": false,
+			"rewrites": [{ "source": "/(.*)", "destination": "/200.html" }],
+			"headers": [
+				{
+					"source": "/_app/immutable/(.*)",
+					"headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+				},
+				{
+					"source": "/videos/(.*)",
+					"headers": [{ "key": "Cache-Control", "value": "public, max-age=86400" }]
+				}
+			]
+		},
+		"studio": {
+			"root": "studio",
+			"framework": "sanity",
+			"buildCommand": "sanity build dist/studio -y",
+			"outputDirectory": "dist",
+			"rewrites": [{ "source": "/studio/(.*)", "destination": "/studio/index.html" }]
+		},
+		"api": {
+			"root": "functions",
+			"runtime": "node",
+			"entrypoint": "vercel.js"
+		}
+	},
+	"rewrites": [
+		{ "source": "/api/:path*", "destination": { "service": "api" } },
+		{ "source": "/studio/:path*", "destination": { "service": "studio" } },
+		{ "source": "/(.*)", "destination": { "service": "app" } }
+	]
+}
