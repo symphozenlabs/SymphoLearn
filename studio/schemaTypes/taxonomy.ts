@@ -19,7 +19,7 @@ export const category = defineType({
 
 export const instructor = defineType({
 	name: 'instructor',
-	title: 'Instructor',
+	title: 'Mentor',
 	type: 'document',
 	icon: UserIcon,
 	fields: [

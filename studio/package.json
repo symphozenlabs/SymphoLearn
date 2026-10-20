@@ -1,8 +1,8 @@
 {
-	"name": "sympholearn-studio",
+	"name": "symphozen-academia-studio",
 	"private": true,
 	"type": "module",
-	"description": "Sanity Studio for SymphoLearn — courses, images, pricing and site copy",
+	"description": "Sanity Studio for SymphoZen Academia — programs, images, fees and site copy",
 	"scripts": {
 		"dev": "sanity dev",
 		"build": "sanity build",

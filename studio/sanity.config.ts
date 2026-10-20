@@ -14,18 +14,18 @@ const SINGLETON = 'siteSettings';
 
 const structure: StructureResolver = (S) =>
 	S.list()
-		.title('SymphoLearn')
+		.title('SymphoZen Academia')
 		.items([
 			S.listItem().title('Site settings').icon(CogIcon).child(S.document().schemaType(SINGLETON).documentId(SINGLETON)),
 			S.divider(),
-			S.documentTypeListItem('course').title('Courses').icon(BookIcon),
+			S.documentTypeListItem('course').title('Programs').icon(BookIcon),
 			S.documentTypeListItem('category').title('Categories').icon(TagIcon),
-			S.documentTypeListItem('instructor').title('Instructors').icon(UserIcon)
+			S.documentTypeListItem('instructor').title('Mentors').icon(UserIcon)
 		]);
 
 export default defineConfig({
-	name: 'sympholearn',
-	title: 'SymphoLearn',
+	name: 'symphozen-academia',
+	title: 'SymphoZen Academia',
 	// served at /studio on the site's domain (see ../vercel.json)
 	basePath: '/studio',
 	projectId,
