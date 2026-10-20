@@ -6,7 +6,7 @@
 	"scripts": {
 		"dev": "sanity dev",
 		"build": "sanity build",
-		"deploy": "sanity deploy",
+		"deploy": "SANITY_STUDIO_BASEPATH=/ sanity deploy",
 		"seed": "sanity dataset import seed/catalog.ndjson production --replace"
 	},
 	"dependencies": {

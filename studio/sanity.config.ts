@@ -26,8 +26,6 @@ const structure: StructureResolver = (S) =>
 export default defineConfig({
 	name: 'symphozen-academia',
 	title: 'SymphoZen Academia',
-	// served at /studio on the site's domain (see ../vercel.json)
-	basePath: '/studio',
 	projectId,
 	dataset,
 	plugins: [structureTool({ structure }), visionTool()],
