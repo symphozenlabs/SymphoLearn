@@ -136,6 +136,15 @@ export const course = defineType({
 		defineField({ name: 'requirements', type: 'array', of: [{ type: 'string' }], group: 'details' }),
 		defineField({ name: 'skills', type: 'array', of: [{ type: 'string' }], group: 'details', options: { layout: 'tags' } }),
 		defineField({
+			name: 'careers',
+			title: 'Career roles',
+			type: 'array',
+			of: [{ type: 'string' }],
+			group: 'details',
+			options: { layout: 'tags' },
+			description: 'Job roles this program prepares learners for, e.g. "Data Analyst"'
+		}),
+		defineField({
 			name: 'reviews',
 			type: 'array',
 			group: 'details',

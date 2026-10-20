@@ -2,18 +2,14 @@
 	import '../app.css';
 	import { onMount } from 'svelte';
 	import { onNavigate } from '$app/navigation';
-	import { page } from '$app/state';
 	import Navbar from '$lib/components/Navbar.svelte';
 	import Footer from '$lib/components/Footer.svelte';
-	import { progress } from '$lib/stores/progress.svelte';
+	import EnquiryDialog from '$lib/components/EnquiryDialog.svelte';
+	import ContactDock from '$lib/components/ContactDock.svelte';
 
 	let { children } = $props();
 
-	/** The learning room is a focused, full-screen app with its own chrome. */
-	const immersive = $derived(page.url.pathname.startsWith('/learn'));
-
 	onMount(() => {
-		progress.hydrate();
 		// While the page is scrolling, cards don't react to the pointer: otherwise each card
 		// that slides under a resting cursor lifts and drops in turn, which reads as a glitch.
 		const html = document.documentElement;
@@ -44,17 +40,15 @@
 
 <a class="skip-link" href="#main">Skip to content</a>
 
-{#if !immersive}
-	<Navbar />
-{/if}
+<Navbar />
 
-<main id="main" class:immersive>
+<main id="main">
 	{@render children()}
 </main>
 
-{#if !immersive}
-	<Footer />
-{/if}
+<Footer />
+<ContactDock />
+<EnquiryDialog />
 
 <style>
 	main {

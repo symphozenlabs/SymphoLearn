@@ -19,11 +19,11 @@ const strict = process.env.SANITY_STRICT === '1';
 
 const IMAGE = `{ "url": asset->url, "ext": asset->extension, hotspot, alt }`;
 const QUERY = `{
-  "site": *[_id == "siteSettings"][0]{ tagline, taglineNote, currency, locale, offerNote, contactEmail, "heroCourseId": heroCourse->slug.current },
+  "site": *[_id == "siteSettings"][0]{ tagline, taglineNote, currency, locale, offerNote, announcement, contactEmail, phone, whatsapp, address, hours },
   "categories": *[_type == "category" && defined(slug.current)] | order(order asc, name asc){ "id": slug.current, name, description },
   "courses": *[_type == "course" && defined(slug.current)] | order(order asc, title asc){
     "id": slug.current, title, subtitle, description, level, duration, rating, ratingCount, students,
-    outcomes, requirements, skills, tone, featured, updated, language, price,
+    outcomes, requirements, skills, careers, tone, featured, updated, language, price,
     "thumbnail": thumbnail${IMAGE},
     "category": category->slug.current,
     "instructor": instructor->{ "id": slug.current, name, role, bio, "avatar": avatar${IMAGE} },
@@ -97,6 +97,7 @@ function toCourse(d, warn) {
 		requirements: d.requirements ?? [],
 		reviews: (d.reviews ?? []).map((r) => ({ id: r._key, author: r.author, role: r.role ?? '', rating: r.rating, body: r.body, date: r.date ?? '' })),
 		skills: d.skills ?? [],
+		careers: d.careers ?? [],
 		tone: d.tone ?? 'paper',
 		...(d.featured ? { featured: true } : {}),
 		updated: d.updated ?? new Date().toISOString().slice(0, 7),

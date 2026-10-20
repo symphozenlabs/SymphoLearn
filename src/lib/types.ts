@@ -88,11 +88,13 @@ export interface Course {
 	updated: string;
 	language: string;
 	price: Price;
+	/** job roles the program prepares for */
+	careers?: string[];
 }
 
 /** Site-wide copy and settings (a singleton document in Sanity). */
 export interface SiteSettings {
-	/** the signature line, e.g. "Learn with SymphoZen" — the last word is set in italic */
+	/** the signature line, e.g. "Beyond Classrooms. Into Possibilities" — the last word is set in italic */
 	tagline: string;
 	taglineNote: string;
 	/** ISO 4217 code for every course price */
@@ -101,10 +103,18 @@ export interface SiteSettings {
 	locale: string;
 	/** short line next to prices, e.g. "Launch offer" */
 	offerNote: string;
-	/** the course the home-page story follows */
-	heroCourseId: string;
-	/** where course-interest leads should be answered from, shown to visitors */
+	/** the line in the top announcement bar, e.g. "New batches start every month" */
+	announcement: string;
+	/** shown to visitors as the place to reach the team */
 	contactEmail: string;
+	/** phone number as displayed, e.g. "+91 98765 43210" — empty hides every call button */
+	phone: string;
+	/** WhatsApp number in international format, digits only, e.g. "919876543210" — empty hides WhatsApp */
+	whatsapp: string;
+	/** postal address of the training centre — empty hides it */
+	address: string;
+	/** opening hours, e.g. "Mon – Sat · 9:30 am – 7:00 pm" */
+	hours: string;
 }
 
 /** Everything the static site renders — from Sanity at build time, or the bundled seed. */

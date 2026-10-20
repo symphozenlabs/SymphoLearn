@@ -1,29 +1,32 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { afterNavigate } from '$app/navigation';
-	import { Search, ChevronDown, ArrowUpRight } from '@lucide/svelte';
+	import { Search, ChevronDown, Phone, Mail, MessageCircle, ArrowRight } from '@lucide/svelte';
 	import Logo from './Logo.svelte';
 	import Button from './Button.svelte';
 	import SearchDialog from './SearchDialog.svelte';
-	import { categories } from '$lib/data/catalog';
-	import { countByCategory } from '$lib/services/courseService';
+	import { categories, courses, site, telHref, mailHref, whatsappHref } from '$lib/data/catalog';
+	import { enquiry } from '$lib/stores/enquiry.svelte';
 
 	let scrolled = $state(false);
 	let menuOpen = $state(false);
-	let catsOpen = $state(false);
+	let progOpen = $state(false);
 	let searchOpen = $state(false);
-	let catsWrap = $state<HTMLElement>();
+	let progWrap = $state<HTMLElement>();
 
+	const wa = whatsappHref();
 	const links = [
-		{ href: '/courses', label: 'Explore' },
-		{ href: '/dashboard', label: 'My Learning' }
+		{ href: '/corporate-training', label: 'Corporate training' },
+		{ href: '/about', label: 'About' },
+		{ href: '/contact', label: 'Contact' }
 	];
+	const groups = categories.map((c) => ({ ...c, list: courses.filter((x) => x.category === c.id) }));
 
 	const isActive = (href: string) => page.url.pathname === href || page.url.pathname.startsWith(href + '/');
 
 	afterNavigate(() => {
 		menuOpen = false;
-		catsOpen = false;
+		progOpen = false;
 	});
 
 	$effect(() => {
@@ -31,19 +34,24 @@
 	});
 
 	function onwindowkeydown(e: KeyboardEvent) {
-		const typing = e.target instanceof HTMLElement && e.target.closest('input, textarea, [contenteditable]');
+		const typing = e.target instanceof HTMLElement && e.target.closest('input, textarea, select, [contenteditable]');
 		if ((e.key === 'k' && (e.metaKey || e.ctrlKey)) || (e.key === '/' && !typing)) {
 			e.preventDefault();
 			searchOpen = true;
 		}
 		if (e.key === 'Escape') {
-			catsOpen = false;
+			progOpen = false;
 			menuOpen = false;
 		}
 	}
 
 	function onwindowclick(e: MouseEvent) {
-		if (catsOpen && catsWrap && !catsWrap.contains(e.target as Node)) catsOpen = false;
+		if (progOpen && progWrap && !progWrap.contains(e.target as Node)) progOpen = false;
+	}
+
+	function demo() {
+		menuOpen = false;
+		enquiry.show({ kind: 'demo' });
 	}
 </script>
 
@@ -54,49 +62,70 @@
 />
 
 <header class="nav" class:scrolled class:menu-open={menuOpen}>
+	<div class="top">
+		<div class="container-x top-in">
+			<p class="ann">
+				<span class="dot" aria-hidden="true"></span>
+				<span class="ann-t">{site.announcement}</span>
+				<button class="ann-cta" onclick={demo}>Book now <ArrowRight size={12} strokeWidth={2} /></button>
+			</p>
+			<div class="reach">
+				{#if telHref}<a href={telHref}><Phone size={13} strokeWidth={1.8} /> {site.phone}</a>{/if}
+				{#if mailHref}<a href={mailHref} class="mail"><Mail size={13} strokeWidth={1.8} /> {site.contactEmail}</a>{/if}
+				{#if wa}<a href={wa} target="_blank" rel="noopener"><MessageCircle size={13} strokeWidth={1.8} /> WhatsApp</a>{/if}
+			</div>
+		</div>
+	</div>
+
 	<div class="bar container-x">
 		<Logo />
 
 		<nav class="primary" aria-label="Primary">
+			<div class="prog" bind:this={progWrap}>
+				<button
+					class="link"
+					class:active={isActive('/courses')}
+					aria-expanded={progOpen}
+					aria-controls="prog-menu"
+					onclick={() => (progOpen = !progOpen)}
+				>
+					Programs <ChevronDown size={14} strokeWidth={1.75} class="chev" />
+				</button>
+				{#if progOpen}
+					<div id="prog-menu" class="mega">
+						<div class="mega-cols">
+							{#each groups as g, i (g.id)}
+								<div class="grp" style="--i:{i}">
+									<a class="grp-h" href="/courses?category={g.id}">{g.name}</a>
+									<ul>
+										{#each g.list as c (c.id)}
+											<li><a href="/courses/{c.id}">{c.title}</a></li>
+										{/each}
+									</ul>
+								</div>
+							{/each}
+						</div>
+						<aside class="mega-side">
+							<p class="eyebrow">Not sure where to start?</p>
+							<p class="side-t">Talk to a counsellor — it’s free.</p>
+							<Button size="sm" arrow onclick={() => { progOpen = false; enquiry.show({ kind: 'counselling' }); }}>Free counselling</Button>
+							<a class="all" href="/courses">View all {courses.length} programs <ArrowRight size={14} strokeWidth={1.7} /></a>
+						</aside>
+					</div>
+				{/if}
+			</div>
 			{#each links as link (link.href)}
 				<a href={link.href} class="link" class:active={isActive(link.href)} aria-current={isActive(link.href) ? 'page' : undefined}>
 					{link.label}
 				</a>
 			{/each}
-			<div class="cats" bind:this={catsWrap}>
-				<button
-					class="link"
-					aria-expanded={catsOpen}
-					aria-controls="cats-menu"
-					onclick={() => (catsOpen = !catsOpen)}
-				>
-					Categories <ChevronDown size={14} strokeWidth={1.75} class="chev" />
-				</button>
-				{#if catsOpen}
-					<div id="cats-menu" class="cats-menu">
-						<p class="t-label">Browse by discipline</p>
-						<ul>
-							{#each categories as c, i (c.id)}
-								<li style="--i:{i}">
-									<a href="/courses?category={c.id}">
-										<span>{c.name}</span>
-										<span class="count">{String(countByCategory(c.id)).padStart(2, '0')}</span>
-									</a>
-								</li>
-							{/each}
-						</ul>
-					</div>
-				{/if}
-			</div>
 		</nav>
 
 		<div class="actions">
-			<button class="search-btn" onclick={() => (searchOpen = true)} aria-label="Search courses (Ctrl K)">
+			<button class="search-btn" onclick={() => (searchOpen = true)} aria-label="Search programs (Ctrl K)">
 				<Search size={17} strokeWidth={1.6} />
-				<span class="search-text">Search</span>
-				<kbd>⌘K</kbd>
 			</button>
-			<Button href="/courses" size="sm" arrow>Get started</Button>
+			<Button size="sm" arrow onclick={demo}>Book a free demo</Button>
 		</div>
 
 		<button
@@ -114,18 +143,21 @@
 <div id="mobile-menu" class="sheet" class:open={menuOpen} aria-hidden={!menuOpen} inert={!menuOpen}>
 	<nav aria-label="Mobile" class="container-x">
 		<ul class="big">
-			<li style="--i:0"><a href="/courses">Explore</a></li>
-			<li style="--i:1"><a href="/dashboard">My Learning</a></li>
-			<li style="--i:2"><a href="/courses#categories">Categories</a></li>
-			<li style="--i:3">
+			<li style="--i:0"><a href="/courses">Programs</a></li>
+			{#each links as link, i (link.href)}
+				<li style="--i:{i + 1}"><a href={link.href}>{link.label}</a></li>
+			{/each}
+			<li style="--i:4">
 				<button onclick={() => { menuOpen = false; searchOpen = true; }}>Search</button>
 			</li>
 		</ul>
-		<div class="sheet-foot" style="--i:4">
-			<Button href="/courses" arrow full>Get started</Button>
-			<a href="https://www.symphozen.com/" class="t-label zen" rel="noopener" target="_blank">
-				A SymphoZen Labs product <ArrowUpRight size={12} />
-			</a>
+		<div class="sheet-foot" style="--i:5">
+			<Button arrow full onclick={demo}>Book a free demo</Button>
+			<div class="sheet-reach">
+				{#if telHref}<a href={telHref}><Phone size={14} strokeWidth={1.8} /> {site.phone}</a>{/if}
+				{#if wa}<a href={wa} target="_blank" rel="noopener"><MessageCircle size={14} strokeWidth={1.8} /> WhatsApp</a>{/if}
+				{#if mailHref}<a href={mailHref}><Mail size={14} strokeWidth={1.8} /> {site.contactEmail}</a>{/if}
+			</div>
 		</div>
 	</nav>
 </div>
@@ -137,28 +169,106 @@
 		position: fixed;
 		inset: 0 0 auto;
 		z-index: 50;
-		height: var(--nav-height);
+		transition: transform var(--duration-slow) var(--ease-out);
+	}
+	/* the top bar slides away once the page scrolls; the main bar stays */
+	.nav.scrolled:not(.menu-open) {
+		transform: translateY(calc(-1 * var(--topbar)));
+	}
+
+	/* — top bar — */
+	.top {
+		height: var(--topbar);
+		background: var(--ink);
+		color: rgb(255 255 255 / 0.72);
+		font-size: 0.78rem;
+	}
+	.top-in {
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1.5rem;
+	}
+	.ann {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		min-width: 0;
+	}
+	.dot {
+		flex: none;
+		width: 0.45rem;
+		height: 0.45rem;
+		border-radius: 50%;
+		background: var(--green-400);
+		box-shadow: 0 0 0 0 rgb(123 189 95 / 0.6);
+		animation: pulse 2.4s var(--ease-out) infinite;
+	}
+	.ann-t {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.ann-cta {
+		flex: none;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+		padding: 0;
+		border: 0;
+		background: none;
+		color: var(--green-400);
+		font-weight: 600;
+	}
+	.ann-cta:hover {
+		color: #fff;
+	}
+	.reach {
+		display: flex;
+		align-items: center;
+		gap: 1.25rem;
+		flex: none;
+	}
+	.reach a {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		transition: color var(--duration-normal);
+	}
+	.reach a:hover {
+		color: #fff;
+	}
+	@keyframes pulse {
+		70% {
+			box-shadow: 0 0 0 7px rgb(123 189 95 / 0);
+		}
+		100% {
+			box-shadow: 0 0 0 0 rgb(123 189 95 / 0);
+		}
+	}
+
+	/* — main bar — */
+	.bar {
+		height: var(--bar-height);
+		display: flex;
+		align-items: center;
+		gap: 2.5rem;
 		border-bottom: 1px solid transparent;
+		max-width: none;
+		padding-inline: max(var(--gutter), calc((100vw - var(--container)) / 2 + var(--gutter)));
 		transition:
 			background var(--duration-slow) var(--ease-out),
-			border-color var(--duration-slow) var(--ease-out),
-			backdrop-filter var(--duration-slow) var(--ease-out);
+			border-color var(--duration-slow) var(--ease-out);
 	}
-	.nav.scrolled {
-		background: rgb(252 252 250 / 0.78);
+	.scrolled .bar {
+		background: rgb(252 252 250 / 0.82);
 		border-bottom-color: var(--border);
 		backdrop-filter: blur(14px) saturate(1.2);
 		-webkit-backdrop-filter: blur(14px) saturate(1.2);
 	}
-	.nav.menu-open {
+	.menu-open .bar {
 		background: var(--background);
-		border-bottom-color: transparent;
-	}
-	.bar {
-		height: 100%;
-		display: flex;
-		align-items: center;
-		gap: 2.75rem;
 	}
 
 	.primary {
@@ -174,9 +284,10 @@
 		padding: 0.4rem 0;
 		background: none;
 		border: 0;
-		font-size: 0.98rem;
-		letter-spacing: -0.025em;
+		font-size: 0.96rem;
+		letter-spacing: -0.02em;
 		color: var(--text-primary);
+		white-space: nowrap;
 		transition: color var(--duration-normal) var(--ease-out);
 	}
 	.link:hover,
@@ -212,51 +323,92 @@
 		transform: rotate(180deg);
 	}
 
-	.cats {
+	/* — Programs mega-menu — */
+	.prog {
 		position: relative;
 	}
-	.cats-menu {
+	.mega {
 		position: absolute;
-		top: calc(100% + 1rem);
-		left: -1.25rem;
-		width: 19rem;
-		padding: 1.1rem 0.6rem 0.6rem;
+		top: calc(100% + 1.1rem);
+		left: -1.5rem;
+		width: min(58rem, calc(100vw - 2 * var(--gutter)));
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 15rem;
 		background: var(--surface);
 		border: 1px solid var(--border);
 		border-radius: var(--radius-lg);
 		box-shadow: var(--shadow-elevated);
+		overflow: hidden;
 		animation: menu-in var(--duration-normal) var(--ease-out);
 	}
-	.cats-menu .t-label {
-		padding: 0 0.65rem 0.6rem;
+	.mega-cols {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 1.5rem 1.75rem;
+		padding: 1.6rem 1.75rem;
 	}
-	.cats-menu ul {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-	}
-	.cats-menu li {
+	.grp {
 		animation: menu-in var(--duration-slow) var(--ease-out) both;
 		animation-delay: calc(var(--i) * 25ms);
 	}
-	.cats-menu a {
-		display: flex;
-		justify-content: space-between;
-		padding: 0.55rem 0.65rem;
-		border-radius: var(--radius-md);
-		font-size: 0.92rem;
+	.grp-h {
+		display: block;
+		margin-bottom: 0.55rem;
+		font-size: 0.66rem;
+		font-weight: 650;
+		letter-spacing: var(--tracking-label);
+		text-transform: uppercase;
+		color: var(--green-600);
+	}
+	.grp-h:hover {
+		color: var(--ink);
+	}
+	.grp ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 0.15rem;
+	}
+	.grp li a {
+		display: block;
+		padding: 0.3rem 0;
+		font-size: 0.9rem;
+		line-height: 1.35;
+		color: var(--text-primary);
 		transition:
-			background var(--duration-fast) var(--ease-out),
-			padding var(--duration-normal) var(--ease-out);
+			color var(--duration-fast),
+			transform var(--duration-normal) var(--ease-out);
 	}
-	.cats-menu a:hover {
+	.grp li a:hover {
+		color: var(--brand-primary);
+		transform: translateX(3px);
+	}
+	.mega-side {
+		display: grid;
+		align-content: start;
+		justify-items: start;
+		gap: 0.9rem;
+		padding: 1.6rem 1.5rem;
 		background: var(--surface-soft);
-		padding-left: 0.9rem;
+		border-left: 1px solid var(--border);
 	}
-	.count {
+	.side-t {
 		font-family: var(--font-display);
-		color: var(--text-muted);
-		font-size: 0.85rem;
+		font-size: 1.35rem;
+		line-height: 1.2;
+		color: var(--ink);
+	}
+	.all {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		margin-top: 0.4rem;
+		font-size: 0.84rem;
+		font-weight: 500;
+		color: var(--ink);
+		border-bottom: 1px solid var(--ink);
+		padding-bottom: 0.15rem;
 	}
 	@keyframes menu-in {
 		from {
@@ -269,19 +421,17 @@
 		margin-left: auto;
 		display: flex;
 		align-items: center;
-		gap: 1.25rem;
+		gap: 0.9rem;
 	}
 	.search-btn {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.55rem;
-		height: 2.4rem;
-		padding: 0 0.6rem 0 0.8rem;
+		display: grid;
+		place-items: center;
+		width: 2.6rem;
+		height: 2.6rem;
 		border: 1px solid var(--border);
 		border-radius: var(--radius-md);
 		background: rgb(255 255 255 / 0.5);
 		color: var(--text-muted);
-		font-size: 0.86rem;
 		transition:
 			border-color var(--duration-normal) var(--ease-out),
 			color var(--duration-normal) var(--ease-out);
@@ -289,16 +439,6 @@
 	.search-btn:hover {
 		border-color: var(--border-strong);
 		color: var(--ink);
-	}
-	.search-text {
-		min-width: 6rem;
-		text-align: left;
-	}
-	kbd {
-		font: 500 0.66rem var(--font-body);
-		padding: 0.15rem 0.4rem;
-		border: 1px solid var(--border);
-		border-radius: var(--radius-sm);
 	}
 
 	.burger {
@@ -353,7 +493,7 @@
 		min-height: 100%;
 		display: flex;
 		flex-direction: column;
-		padding-top: 2rem;
+		padding-top: 1.5rem;
 		padding-bottom: 2rem;
 	}
 	.big {
@@ -380,12 +520,12 @@
 		display: block;
 		width: 100%;
 		text-align: left;
-		padding: 0.9rem 0;
+		padding: 0.85rem 0;
 		border: 0;
 		border-bottom: 1px solid var(--border);
 		background: none;
 		font-family: var(--font-display);
-		font-size: clamp(2.1rem, 9vw, 3rem);
+		font-size: clamp(1.9rem, 8vw, 2.75rem);
 		letter-spacing: -0.02em;
 		color: var(--ink);
 	}
@@ -395,34 +535,64 @@
 		display: grid;
 		gap: 1.25rem;
 	}
-	.zen {
+	.sheet-reach {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem 1.25rem;
+		font-size: 0.88rem;
+		color: var(--text-secondary);
+	}
+	.sheet-reach a {
 		display: inline-flex;
-		gap: 0.3rem;
 		align-items: center;
+		gap: 0.4rem;
 	}
 
-	@media (max-width: 1024px) {
-		.search-text,
-		kbd {
+	@media (max-width: 1100px) {
+		.mail {
 			display: none;
-		}
-		.search-btn {
-			padding: 0 0.7rem;
 		}
 		.primary {
 			gap: 1.4rem;
 		}
 		.bar {
-			gap: 2rem;
+			gap: 1.75rem;
+		}
+		.mega {
+			grid-template-columns: minmax(0, 1fr);
+		}
+		.mega-side {
+			border-left: 0;
+			border-top: 1px solid var(--border);
+			grid-template-columns: 1fr auto;
+			align-items: center;
+		}
+		.mega-side .eyebrow,
+		.mega-side .all {
+			grid-column: 1 / -1;
 		}
 	}
-	@media (max-width: 860px) {
+	@media (max-width: 960px) {
 		.primary,
 		.actions {
 			display: none;
 		}
 		.burger {
 			display: block;
+			flex: none;
+		}
+		/* the lockup is wide — let it shrink so the menu button always fits */
+		.bar {
+			gap: 1rem;
+		}
+		.bar :global(.logo) {
+			flex: 0 1 auto;
+			min-width: 0;
+		}
+	}
+	@media (max-width: 640px) {
+		.reach {
+			display: none;
 		}
 	}
 </style>

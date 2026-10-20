@@ -1,6 +1,6 @@
 <!--
 	Course page preview: the cover morphs in from the catalog (shared element),
-	and if the course has a free preview lesson, it plays inline.
+	and if the program has a free sample class, it plays inline.
 -->
 <script lang="ts">
 	import { Play } from '@lucide/svelte';
@@ -38,7 +38,7 @@
 				<button class="play" onclick={() => (playing = true)}>
 					<span class="disc"><Play size={20} strokeWidth={0} fill="currentColor" /></span>
 					<span class="lbl">
-						<span class="t-label">Free preview</span>
+						<span class="t-label">Watch a sample class</span>
 						<span>{previewLesson.number} — {previewLesson.title} · {previewLesson.duration}</span>
 					</span>
 				</button>
@@ -46,7 +46,7 @@
 		{/if}
 	</div>
 	<figcaption class="t-label">
-		{previewLesson ? 'Course preview' : 'Course cover'} · {course.title}
+		{previewLesson ? 'Sample class' : 'Program'} · {course.title}
 	</figcaption>
 </figure>
 

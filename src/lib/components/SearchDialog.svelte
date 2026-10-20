@@ -65,14 +65,14 @@
 <dialog
 	bind:this={dialog}
 	class="search"
-	aria-label="Search courses"
+	aria-label="Search programs"
 	onclose={() => (open = false)}
 	onclick={(e) => e.target === dialog && (open = false)}
 >
 	<div class="panel">
 		<label class="field">
 			<Search size={18} strokeWidth={1.6} aria-hidden="true" />
-			<span class="sr-only">Search courses</span>
+			<span class="sr-only">Search programs</span>
 			<input
 				bind:this={input}
 				bind:value={query}

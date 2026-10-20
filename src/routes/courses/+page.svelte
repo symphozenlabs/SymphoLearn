@@ -3,6 +3,9 @@
 	import { afterNavigate, replaceState } from '$app/navigation';
 	import { Search, LayoutGrid, List, X } from '@lucide/svelte';
 	import CourseGrid from '$lib/components/CourseGrid.svelte';
+	import Button from '$lib/components/Button.svelte';
+	import { BRAND } from '$lib/data/site';
+	import { enquiry } from '$lib/stores/enquiry.svelte';
 	import { reveal } from '$lib/motion/actions';
 	import { parseDuration } from '$lib/utils/course';
 	import type { CategoryId, Course, Level } from '$lib/types';
@@ -101,16 +104,20 @@
 </script>
 
 <svelte:head>
-	<title>Explore courses — SymphoLearn</title>
+	<title>Programs & fees — {BRAND}</title>
+	<meta name="description" content="{data.courses.length} mentor-led career programs across {data.categories.length} disciplines — live online, classroom or hybrid, with certificate and career support." />
 </svelte:head>
 
 <header class="intro container-x editorial-grid" use:reveal>
-	<p class="eyebrow k" data-reveal>Explore</p>
-	<h1 class="t-h1" data-reveal>Find something<br />worth <em class="italic-accent">learning.</em></h1>
-	<p class="lead" data-reveal>
-		{data.courses.length} carefully produced courses across {data.categories.length} disciplines — each one a
-		path, not a playlist.
-	</p>
+	<p class="eyebrow k" data-reveal>Programs</p>
+	<h1 class="t-h1" data-reveal>Find the program<br />for your <em class="italic-accent">next role.</em></h1>
+	<div class="lead" data-reveal>
+		<p>
+			{data.courses.length} mentor-led programs across {data.categories.length} disciplines — live online, in the
+			classroom or hybrid, each ending in a project you can show.
+		</p>
+		<Button size="sm" arrow onclick={() => enquiry.show({ kind: 'counselling' })}>Help me choose</Button>
+	</div>
 </header>
 
 <div class="controls" id="categories">
@@ -127,8 +134,8 @@
 		<div class="filters">
 			<label class="search">
 				<Search size={16} strokeWidth={1.6} aria-hidden="true" />
-				<span class="sr-only">Search courses</span>
-				<input type="search" placeholder="Search by skill, title or instructor" bind:value={q} />
+				<span class="sr-only">Search programs</span>
+				<input type="search" placeholder="Search by skill, program or mentor" bind:value={q} />
 				{#if q}
 					<button class="clear" onclick={() => (q = '')} aria-label="Clear search"><X size={14} /></button>
 				{/if}
@@ -143,7 +150,7 @@
 			</div>
 
 			<label class="select">
-				<span class="sr-only">Course length</span>
+				<span class="sr-only">Program length</span>
 				<select bind:value={length}>
 					{#each lengths as o (o.id)}<option value={o.id}>{o.label}</option>{/each}
 				</select>
@@ -171,7 +178,7 @@
 <section class="results container-x" aria-live="polite">
 	<div class="summary">
 		<p class="t-label">
-			{results.length} {results.length === 1 ? 'course' : 'courses'}
+			{results.length} {results.length === 1 ? 'program' : 'programs'}
 			{#if category !== 'all'}· {data.categories.find((c) => c.id === category)?.name}{/if}
 		</p>
 		{#if activeFilters}
@@ -186,8 +193,9 @@
 	{:else}
 		<div class="empty">
 			<p class="t-h2">Nothing here — <em class="italic-accent">yet.</em></p>
-			<p>No course matches those filters. Try a broader search or another discipline.</p>
+			<p>No program matches those filters. Try a broader search — or tell us what you’re looking for.</p>
 			<button class="reset" onclick={reset}>Clear all filters</button>
+			<Button arrow onclick={() => enquiry.show({ kind: 'counselling' })}>Talk to a counsellor</Button>
 		</div>
 	{/if}
 </section>
@@ -208,19 +216,22 @@
 	}
 	.lead {
 		grid-column: 9 / span 4;
+		display: grid;
+		gap: 1.1rem;
+		justify-items: start;
 		color: var(--text-secondary);
 		padding-bottom: 0.75rem;
 	}
 
 	.controls {
 		position: sticky;
-		top: var(--nav-height);
+		top: var(--bar-height);
 		z-index: 10;
 		padding: 1rem 0;
 		background: rgb(252 252 250 / 0.88);
 		backdrop-filter: blur(14px);
 		border-block: 1px solid var(--border);
-		scroll-margin-top: var(--nav-height);
+		scroll-margin-top: var(--bar-height);
 	}
 	.chips {
 		display: flex;

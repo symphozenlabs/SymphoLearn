@@ -33,8 +33,12 @@ docs.push({
 	currency: siteSeed.currency,
 	locale: siteSeed.locale,
 	offerNote: siteSeed.offerNote,
+	announcement: siteSeed.announcement,
 	contactEmail: siteSeed.contactEmail,
-	heroCourse: ref(`course-${siteSeed.heroCourseId}`)
+	phone: siteSeed.phone,
+	whatsapp: siteSeed.whatsapp,
+	address: siteSeed.address,
+	hours: siteSeed.hours
 });
 
 categories.forEach((c, i) =>
@@ -79,6 +83,7 @@ courses.forEach((c, i) =>
 		outcomes: c.outcomes,
 		requirements: c.requirements,
 		skills: c.skills,
+		careers: c.careers ?? [],
 		reviews: c.reviews.map((r) => ({ _key: key(), _type: 'review', author: r.author, role: r.role, rating: r.rating, body: r.body, date: r.date })),
 		rating: c.rating,
 		ratingCount: c.ratingCount,

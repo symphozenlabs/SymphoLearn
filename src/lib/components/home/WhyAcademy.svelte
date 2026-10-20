@@ -1,60 +1,51 @@
 <script lang="ts">
 	import { reveal, countUp } from '$lib/motion/actions';
 	import Button from '../Button.svelte';
+	import { features } from '$lib/data/academy';
+	import { stats } from '$lib/data/catalog';
+	import { enquiry } from '$lib/stores/enquiry.svelte';
 
-	const principles = [
-		{
-			title: 'Clarity',
-			body: 'Every lesson has one purpose and ends with something you made. No filler, no padding, no forty-minute intros.'
-		},
-		{
-			title: 'Continuity',
-			body: 'Close the tab mid-sentence. When you return, the video, the lesson and your place in the course are waiting.'
-		},
-		{
-			title: 'Craft',
-			body: 'Courses are produced like products — scripted, edited and revised with learners, then maintained as tools change.'
-		}
-	];
+	const learnersK = Math.floor(stats.learners / 1000);
 </script>
 
 <section class="why" use:reveal>
 	<div class="container-x editorial-grid">
 		<aside class="visual" data-reveal>
 			<div class="panel">
-				<p class="eyebrow">Learners, in numbers</p>
+				<p class="eyebrow">Our learners, in numbers</p>
 				<div class="stat">
-					<span class="t-num big"><span use:countUp={{ to: 94 }}>00</span><small>%</small></span>
-					<span class="cap">of learners who start a course complete its first section.</span>
+					<span class="t-num big"><span use:countUp={{ to: learnersK, pad: 1 }}>0</span><small>k+</small></span>
+					<span class="cap">learners trained across {stats.programs} career programs and {stats.disciplines} disciplines.</span>
 				</div>
 				<div class="rows">
-					<div><span class="t-num"><span use:countUp={{ to: 12 }}>00</span>k</span><span>learners this year</span></div>
-					<div><span class="t-num">4.8</span><span>average rating</span></div>
-					<div><span class="t-num"><span use:countUp={{ to: 46 }}>00</span>s</span><span>to your first lesson</span></div>
+					<div><span class="t-num">{stats.rating.toFixed(1)}</span><span>average rating</span></div>
+					<div><span class="t-num"><span use:countUp={{ to: stats.programs }}>00</span></span><span>career programs</span></div>
+					<div><span class="t-num">1:1</span><span>mentor reviews</span></div>
 				</div>
 			</div>
 		</aside>
 
 		<div class="copy">
-			<p class="eyebrow" data-reveal>Why SymphoLearn</p>
-			<h2 class="t-h2" data-reveal>Built like a product,<br />not a <em class="italic-accent">playlist.</em></h2>
+			<p class="eyebrow" data-reveal>Why SymphoZen Academia</p>
+			<h2 class="t-h2" data-reveal>Built for proof,<br />not <em class="italic-accent">paperwork.</em></h2>
 			<p class="t-body-lg lead" data-reveal>
-				Most learning platforms are libraries. We designed a path — fewer, better courses, a calm
-				interface and progress you can feel.
+				Certificates open doors; projects get you hired. Every program is taught live by practitioners and ends
+				with work you can show.
 			</p>
 
 			<ol class="principles">
-				{#each principles as p, i (p.title)}
+				{#each features as f, i (f.title)}
 					<li data-reveal style="--i:{i}">
 						<span class="t-num n">{String(i + 1).padStart(2, '0')}</span>
-						<h3 class="t-h3">{p.title}</h3>
-						<p>{p.body}</p>
+						<h3 class="t-h3">{f.title}</h3>
+						<p>{f.body}</p>
 					</li>
 				{/each}
 			</ol>
 
-			<div data-reveal>
-				<Button href="/courses" variant="secondary" arrow>Explore the catalog</Button>
+			<div class="btns" data-reveal>
+				<Button arrow onclick={() => enquiry.show({ kind: 'demo' })}>Book a free demo</Button>
+				<Button href="/courses" variant="secondary">See all programs</Button>
 			</div>
 		</div>
 	</div>
@@ -67,7 +58,7 @@
 	.visual {
 		grid-column: 1 / span 5;
 		position: sticky;
-		top: calc(var(--nav-height) + 2rem);
+		top: calc(var(--bar-height) + 2rem);
 		align-self: start;
 	}
 	.panel {
@@ -83,6 +74,8 @@
 	}
 	.panel .eyebrow {
 		background: #fff;
+		padding: 0.45rem 0.7rem;
+		border-radius: var(--radius-pill);
 	}
 	.stat {
 		margin: auto 0;
@@ -94,8 +87,6 @@
 		font-size: clamp(5.5rem, 11vw, 9rem);
 		line-height: 0.85;
 		letter-spacing: -0.04em;
-	}
-	.big {
 		color: var(--ink);
 	}
 	.big small {
@@ -144,28 +135,25 @@
 	}
 	.principles {
 		list-style: none;
-		margin: 2rem 0 1.5rem;
+		margin: 1.5rem 0 1rem;
 		padding: 0;
-	}
-	.principles {
 		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: 0.75rem;
 	}
 	.principles li {
 		display: grid;
 		grid-template-columns: 3rem 1fr;
 		column-gap: 0.5rem;
-		padding: 1.4rem 1.5rem;
+		align-content: start;
+		padding: 1.3rem 1.4rem;
 		border-radius: var(--radius-lg);
 		background: var(--surface);
 		box-shadow: 0 0 0 1px rgb(23 25 22 / 0.06);
 	}
-	/* each principle steps further in */
-	.principles li:nth-child(2) {
-		margin-left: 8%;
-	}
-	.principles li:nth-child(3) {
-		margin-left: 16%;
+	.principles .t-h3 {
+		font-size: 1.05rem;
+		align-self: center;
 	}
 	.n {
 		grid-row: span 2;
@@ -179,11 +167,21 @@
 		font-size: 0.9rem;
 	}
 	.principles p {
-		margin-top: 0.5rem;
+		margin-top: 0.4rem;
 		color: var(--text-secondary);
-		max-width: 28rem;
+		font-size: 0.9rem;
+	}
+	.btns {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
 	}
 
+	@media (max-width: 1100px) {
+		.principles {
+			grid-template-columns: minmax(0, 1fr);
+		}
+	}
 	@media (max-width: 960px) {
 		.visual {
 			position: relative;
@@ -199,8 +197,10 @@
 			grid-column: 1 / -1;
 			padding-top: 0;
 		}
-		.principles li:nth-child(n) {
-			margin-left: 0;
+	}
+	@media (min-width: 640px) and (max-width: 960px) {
+		.principles {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 	}
 </style>

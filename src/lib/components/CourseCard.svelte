@@ -1,14 +1,11 @@
 <!--
-	CourseCard — a rounded "lesson tile".
-	The row of dots at the bottom is the course's lesson path: completed lessons
-	are filled for enrolled learners, and on hover the path previews itself.
+	CourseCard — a rounded program tile: cover, title, mentor, the facts people
+	compare (length, modules, rating), how it's taught, and the fee.
 -->
 <script lang="ts">
-	import { ArrowRight, Clock, PlayCircle, Star } from '@lucide/svelte';
+	import { ArrowRight, Clock, Layers, Star, Award } from '@lucide/svelte';
 	import type { Course } from '$lib/types';
 	import { getCategory } from '$lib/services/courseService';
-	import { allLessons } from '$lib/utils/course';
-	import { progress } from '$lib/stores/progress.svelte';
 	import Avatar from './Avatar.svelte';
 	import PriceTag from './PriceTag.svelte';
 	import { site } from '$lib/data/catalog';
@@ -26,12 +23,6 @@
 	let { course, variant = 'tile', morph = true }: Props = $props();
 
 	const category = $derived(getCategory(course.category));
-	const lessons = $derived(allLessons(course));
-	const enrolled = $derived(progress.ready && progress.isEnrolled(course.id));
-	const pct = $derived(enrolled ? progress.percent(course) : 0);
-	const path = $derived(
-		lessons.slice(0, 16).map((l) => (enrolled ? progress.isCompleted(course.id, l.id) : false))
-	);
 </script>
 
 <a
@@ -50,11 +41,7 @@
 			style:view-transition-name={morph ? `cover-${course.id}` : undefined}
 		/>
 		<span class="pill cat">{category.name}</span>
-		{#if enrolled}
-			<span class="pill status">{pct === 100 ? 'Completed' : `${pct}% done`}</span>
-		{:else}
-			<span class="pill lvl">{course.level}</span>
-		{/if}
+		<span class="pill lvl">{course.level}</span>
 	</div>
 
 	<div class="body">
@@ -70,15 +57,14 @@
 
 		<div class="facts">
 			<span><Clock size={14} strokeWidth={1.6} aria-hidden="true" />{course.duration}</span>
-			<span><PlayCircle size={14} strokeWidth={1.6} aria-hidden="true" />{lessons.length} lessons</span>
+			<span><Layers size={14} strokeWidth={1.6} aria-hidden="true" />{course.sections.length} modules</span>
 			<span class="rating"><Star size={13} strokeWidth={0} fill="currentColor" aria-hidden="true" />{course.rating.toFixed(1)}</span>
 		</div>
 
-		<span class="path" aria-hidden="true">
-			{#each path as done, i (i)}
-				<i class:done style="--i:{i}"></i>
-			{/each}
-		</span>
+		<p class="how">
+			<Award size={14} strokeWidth={1.6} aria-hidden="true" />
+			Online · Classroom · Hybrid — with certificate
+		</p>
 		<div class="foot">
 			<PriceTag price={course.price} size={variant === 'feature' ? 'md' : 'sm'} />
 			<span class="go" aria-hidden="true"><ArrowRight size={16} strokeWidth={1.8} /></span>
@@ -150,14 +136,9 @@
 	.cat {
 		left: 0.7rem;
 	}
-	.lvl,
-	.status {
+	.lvl {
 		right: 0.7rem;
 		color: var(--text-secondary);
-	}
-	.status {
-		background: var(--brand-primary);
-		color: #fff;
 	}
 
 	/* Body */
@@ -209,7 +190,19 @@
 		font-weight: 500;
 	}
 
-	/* Lesson path + action */
+	/* How it's taught + fee */
+	.how {
+		margin-top: auto;
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		font-size: 0.78rem;
+		color: var(--text-muted);
+	}
+	.how :global(svg) {
+		flex: none;
+		color: var(--brand-primary);
+	}
 	.foot {
 		display: flex;
 		align-items: center;
@@ -218,33 +211,8 @@
 		padding-top: 0.8rem;
 		border-top: 1px solid var(--border);
 	}
-	.path {
-		margin-top: auto;
-		padding-top: 0.4rem;
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 4px;
-	}
 	.feature .foot {
 		border-top-color: rgb(90 138 69 / 0.2);
-	}
-	.path i {
-		width: 6px;
-		height: 6px;
-		border-radius: 50%;
-		background: var(--border-strong);
-		transition:
-			background var(--duration-normal) var(--ease-out),
-			transform var(--duration-normal) var(--ease-out);
-	}
-	.path i.done {
-		background: var(--brand-primary);
-	}
-	.card:hover .path i:not(.done) {
-		background: var(--green-300);
-		transform: scale(1.15);
-		transition-delay: calc(var(--i) * 30ms);
 	}
 	.go {
 		display: grid;
@@ -305,9 +273,6 @@
 		background: var(--ink);
 		color: #fff;
 	}
-	.feature .path i {
-		background: rgb(90 138 69 / 0.25);
-	}
 
 	/* ── Row: dense list tile ───────────────────────── */
 	.row {
@@ -361,19 +326,12 @@
 			font-size: 1.1rem;
 		}
 		.row .go,
-		.row .path {
+		.row .how {
 			display: none;
 		}
 		.row .foot {
 			border-top: 0;
 			padding-top: 0.2rem;
-		}
-		.path {
-			gap: 3px;
-		}
-		.path i {
-			width: 5px;
-			height: 5px;
 		}
 	}
 </style>

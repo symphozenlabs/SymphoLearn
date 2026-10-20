@@ -7,6 +7,9 @@
 	import { categories, courses } from '$lib/data/catalog';
 	import { reveal } from '$lib/motion/actions';
 
+	const WORDS = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve'];
+	const count = WORDS[categories.length] ?? String(categories.length);
+
 	const tiles = categories.map((c) => {
 		const list = courses.filter((x) => x.category === c.id);
 		return { ...c, count: list.length, cover: list[0]?.thumbnail ?? '', tone: list[0]?.tone ?? 'paper' };
@@ -17,7 +20,7 @@
 	<div class="container-x">
 		<header class="head">
 			<p class="eyebrow" data-reveal>Disciplines</p>
-			<h2 class="t-h2" data-reveal>Seven disciplines.<br /><em class="italic-accent">One</em> way of learning.</h2>
+			<h2 class="t-h2" data-reveal>{count} disciplines.<br /><em class="italic-accent">One</em> standard of training.</h2>
 		</header>
 
 		<ul class="bento">
@@ -26,7 +29,7 @@
 					<a href="/courses?category={t.id}" class="tile tone-{t.tone}">
 						<img src={t.cover} alt="" loading="lazy" width="1600" height="1000" />
 						<span class="shade" aria-hidden="true"></span>
-						<span class="count">{t.count} {t.count === 1 ? 'course' : 'courses'}</span>
+						<span class="count">{t.count} {t.count === 1 ? 'program' : 'programs'}</span>
 						<span class="text">
 							<span class="name">{t.name}</span>
 							<span class="desc">{t.description}</span>

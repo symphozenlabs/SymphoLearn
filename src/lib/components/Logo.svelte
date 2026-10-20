@@ -1,35 +1,35 @@
 <!--
-	Logo — the SymphoLearn lockup, derived from the official SymphoZen Labs logo:
-	the same lotus and "Sympho" outlines, "Learn" in the wordmark's bold green,
-	and the "Learn with SymphoZen" tagline. Files live in /static/brand.
+	Logo — the SymphoZen Academia lockup: the lotus-and-mortarboard mark,
+	"SymphoZen" and the bold green "Academia". Files in /static/brand are derived
+	from the master artwork (SymphoZen Academia Logo.png).
 -->
 <script lang="ts">
+	import { BRAND } from '$lib/data/site';
+
 	interface Props {
-		/** ink: charcoal wordmark for light backgrounds · paper: white wordmark for dark ones */
+		/** ink: charcoal "SymphoZen" for light backgrounds · paper: white for dark ones */
 		tone?: 'ink' | 'paper';
 		/** the lotus mark only */
 		compact?: boolean;
+		/** include the "Beyond Classrooms. Into Possibilities" line (large sizes only) */
+		tagline?: boolean;
 		href?: string;
 		/** rendered height in px (the lockup keeps its proportions) */
 		height?: number;
 	}
-	let { tone = 'ink', compact = false, href = '/', height = 38 }: Props = $props();
+	let { tone = 'ink', compact = false, tagline = false, href = '/', height = 36 }: Props = $props();
 
 	// intrinsic sizes of the artwork
-	const LOCKUP = { w: 1140, h: 216 };
-	const MARK = { w: 239, h: 216 };
-	const art = $derived(compact ? MARK : LOCKUP);
-	const src = $derived(
-		compact
-			? '/brand/sympholearn-mark.svg'
-			: tone === 'paper'
-				? '/brand/sympholearn-logo-on-dark.svg'
-				: '/brand/sympholearn-logo.svg'
-	);
+	const ART = {
+		mark: { w: 512, h: 512, src: () => '/brand/academia-mark.png' },
+		word: { w: 1417, h: 160, src: (t: string) => `/brand/academia-wordmark${t === 'paper' ? '-on-dark' : ''}.png` },
+		full: { w: 2126, h: 240, src: (t: string) => `/brand/academia-logo${t === 'paper' ? '-on-dark' : ''}.png` }
+	};
+	const art = $derived(compact ? ART.mark : tagline ? ART.full : ART.word);
 </script>
 
-<a {href} class="logo" aria-label="SymphoLearn home">
-	<img {src} alt="SymphoLearn" width={Math.round((height * art.w) / art.h)} {height} decoding="async" />
+<a {href} class="logo" aria-label="{BRAND} home">
+	<img src={art.src(tone)} alt={BRAND} width={Math.round((height * art.w) / art.h)} {height} decoding="async" />
 </a>
 
 <style>

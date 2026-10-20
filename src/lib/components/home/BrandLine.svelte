@@ -1,12 +1,12 @@
 <!--
-	BrandLine — the signature "Learn with SymphoZen" line (copy from the CMS).
-	A slow editorial marquee in the display serif: solid and outlined lines
-	alternate, the brand word in italic sage. Reduced motion → one still line.
+	BrandLine — the signature "Beyond Classrooms. Into Possibilities" line (copy
+	from the CMS). A slow editorial marquee in the display serif: solid and
+	outlined lines alternate, the last word in italic sage. Reduced motion → one still line.
 -->
 <script lang="ts">
 	import { site } from '$lib/data/catalog';
 
-	// "Learn with SymphoZen" → lead "Learn with", brand word "SymphoZen"
+	// "Beyond Classrooms. Into Possibilities" → lead "Beyond Classrooms. Into", brand word "Possibilities"
 	const words = site.tagline.trim().split(/\s+/);
 	const brand = words.length > 1 ? words.pop()! : '';
 	const lead = words.join(' ');
@@ -17,7 +17,7 @@
 	<span class="item" class:outline>
 		{lead}{#if brand}&nbsp;<em>{brand}</em>{/if}
 	</span>
-	<img class="mark" src="/brand/sympholearn-mark.svg" alt="" width="239" height="216" aria-hidden="true" />
+	<img class="mark" src="/brand/academia-mark.png" alt="" width="512" height="512" aria-hidden="true" />
 {/snippet}
 
 <section class="brandline" aria-label={site.tagline}>

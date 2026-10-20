@@ -1,17 +1,29 @@
 /**
- * Course-interest handler — the one piece of server code the static site needs.
+ * Enquiry handler — the one piece of server code the static site needs.
  *
- * A visitor clicks "Enroll" and leaves their name + email; this sends ONE email
- * (via Resend) to the SymphoZen team saying that person is interested in that
- * course, with reply-to set to the visitor so the team can answer directly.
+ * Every lead form on the site (free demo, career counselling, course enquiry,
+ * corporate training, contact) posts here; this sends ONE email (via Resend) to
+ * the SymphoZen Academia team, with reply-to set to the visitor when they left
+ * an email address, so the team can answer directly.
  *
- * Shared by the Firebase Function (production, `index.js`) and the Vite dev
- * server (`vite.config.ts`), so local and deployed behaviour match.
- * Plain JS with no dependencies: Resend is called over its HTTP API.
+ * Shared by the Firebase Function (production, `index.js`), the Vercel function
+ * (`vercel.js`) and the Vite dev server (`vite.config.ts`), so local and deployed
+ * behaviour match. Plain JS with no dependencies: Resend is called over its HTTP API.
  */
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const SLUG_RE = /^[a-z0-9][a-z0-9-]{0,95}$/;
+const PHONE_RE = /^\+?[\d\s()-]{7,24}$/;
+
+/** enquiry kind → label used in the email */
+const KINDS = /** @type {const} */ ({
+	demo: 'Free demo class',
+	counselling: 'Career counselling',
+	course: 'Course enquiry',
+	corporate: 'Corporate training',
+	contact: 'General enquiry'
+});
+const MODES = /** @type {const} */ ({ online: 'Live online', classroom: 'Classroom', hybrid: 'Hybrid', corporate: 'Corporate / campus' });
 
 /** @param {unknown} s */
 const esc = (s) =>
@@ -32,18 +44,24 @@ function limited(key, now = Date.now()) {
 }
 
 /**
- * @typedef {{ name: string, email: string, phone: string, message: string, courseId: string,
- *   courseTitle: string, price: string, page: string, company: string }} Interest
+ * @typedef {{ kind: keyof typeof KINDS, name: string, email: string, phone: string, message: string,
+ *   courseId: string, courseTitle: string, price: string, mode: string, organisation: string,
+ *   teamSize: string, page: string, company: string }} Interest
  */
 
 /**
- * Validates the form.
+ * Validates the form. Name and phone are always required; a course is optional
+ * ("not sure yet" is a fine answer), but if one is sent it must look real.
+ * Corporate enquiries also need an organisation and a work email.
  * @param {unknown} body
  * @returns {{ data: Interest, errors?: undefined } | { errors: Record<string, string>, data?: undefined }}
  */
 export function parseInterest(body) {
 	const b = /** @type {Record<string, unknown>} */ (body && typeof body === 'object' ? body : {});
+	const kind = /** @type {keyof typeof KINDS} */ (typeof b.kind === 'string' && b.kind in KINDS ? b.kind : 'course');
+	const mode = clean(b.mode, 20);
 	const data = {
+		kind,
 		name: clean(b.name, 80),
 		email: clean(b.email, 120).toLowerCase(),
 		phone: clean(b.phone, 24),
@@ -51,6 +69,9 @@ export function parseInterest(body) {
 		courseId: clean(b.courseId, 96),
 		courseTitle: clean(b.courseTitle, 140),
 		price: clean(b.price, 40),
+		mode: mode in MODES ? MODES[/** @type {keyof typeof MODES} */ (mode)] : '',
+		organisation: clean(b.organisation, 120),
+		teamSize: clean(b.teamSize, 20),
 		page: clean(b.page, 300),
 		// honeypot: humans never see this field
 		company: clean(b.company, 100)
@@ -58,16 +79,40 @@ export function parseInterest(body) {
 	/** @type {Record<string, string>} */
 	const errors = {};
 	if (data.name.length < 2) errors.name = 'Enter your name.';
-	if (!EMAIL_RE.test(data.email)) errors.email = 'Enter a valid email address.';
-	if (data.phone && !/^\+?[\d\s()-]{7,24}$/.test(data.phone)) errors.phone = 'Use digits, spaces and an optional +.';
-	if (!SLUG_RE.test(data.courseId) || !data.courseTitle) errors.course = 'Unknown course.';
+	if (!PHONE_RE.test(data.phone)) errors.phone = 'Enter a phone number we can call you on.';
+	if (kind === 'corporate' ? !EMAIL_RE.test(data.email) : data.email && !EMAIL_RE.test(data.email))
+		errors.email = 'Enter a valid email address.';
+	if (kind === 'corporate' && data.organisation.length < 2) errors.organisation = 'Enter your organisation’s name.';
+	if (data.courseId && (!SLUG_RE.test(data.courseId) || !data.courseTitle)) errors.course = 'Unknown course.';
+	if (!data.courseId) data.courseTitle = '';
 	return Object.keys(errors).length ? { errors } : { data };
+}
+
+/** @param {Interest} d */
+function subjectFor(d) {
+	const course = d.courseTitle ? ` — ${d.courseTitle}` : '';
+	switch (d.kind) {
+		case 'demo':
+			return `${d.name} booked a free demo${course}`;
+		case 'counselling':
+			return `${d.name} asked for career counselling${course}`;
+		case 'corporate':
+			return `Corporate training enquiry — ${d.organisation} (${d.name})`;
+		default:
+			return d.courseTitle ? `${d.name} is interested in ${d.courseTitle}` : `New enquiry from ${d.name}`;
+	}
 }
 
 /** @param {Interest} d */
 export function interestEmail(d) {
 	const when = new Date().toUTCString();
-	const subject = `${d.name} is interested in ${d.courseTitle}`;
+	const subject = subjectFor(d);
+	const headline =
+		d.kind === 'corporate'
+			? `<strong style="font-weight:600">${esc(d.organisation)}</strong> asked about <em style="color:#5a8a45">corporate training</em>.`
+			: d.courseTitle
+				? `<strong style="font-weight:600">${esc(d.name)}</strong> ${d.kind === 'demo' ? 'booked a free demo of' : 'is interested in'} <em style="color:#5a8a45">${esc(d.courseTitle)}</em>.`
+				: `<strong style="font-weight:600">${esc(d.name)}</strong> ${d.kind === 'counselling' ? 'would like a <em style="color:#5a8a45">career counselling</em> call' : 'sent an <em style="color:#5a8a45">enquiry</em>'}.`;
 	/** @param {string} k @param {string} v */
 	const row = (k, v) =>
 		v
@@ -77,29 +122,39 @@ export function interestEmail(d) {
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f5f1"><tr><td align="center" style="padding:32px 16px">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#fff;border:1px solid #e5e7e2;border-radius:18px">
 <tr><td style="padding:32px 32px 28px">
-<p style="margin:0 0 12px;font:600 12px Helvetica,Arial,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#5a8a45">Course interest</p>
-<h1 style="margin:0;font:500 26px/1.25 Georgia,'Times New Roman',serif;color:#171916"><strong style="font-weight:600">${esc(d.name)}</strong> is interested in <em style="color:#5a8a45">${esc(d.courseTitle)}</em>.</h1>
+<p style="margin:0 0 12px;font:600 12px Helvetica,Arial,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#5a8a45">${KINDS[d.kind]}</p>
+<h1 style="margin:0;font:500 26px/1.25 Georgia,'Times New Roman',serif;color:#171916">${headline}</h1>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:22px;border-top:1px solid #e5e7e2">
-${row('Email', `<a href="mailto:${esc(d.email)}" style="color:#171916">${esc(d.email)}</a>`)}
-${row('Phone', esc(d.phone))}
+${row('Name', esc(d.name))}
+${row('Phone', `<a href="tel:${esc(d.phone.replace(/[^\d+]/g, ''))}" style="color:#171916">${esc(d.phone)}</a>`)}
+${row('Email', d.email ? `<a href="mailto:${esc(d.email)}" style="color:#171916">${esc(d.email)}</a>` : '')}
+${row('Organisation', esc(d.organisation))}
+${row('Team size', esc(d.teamSize))}
 ${row('Course', esc(d.courseTitle))}
+${row('Mode', esc(d.mode))}
 ${row('Price shown', esc(d.price))}
 ${row('Received', esc(when))}
 </table>
 ${d.message ? `<p style="margin:22px 0 0;padding:14px 16px;border-left:3px solid #5a8a45;background:#f4f5f1;font:italic 15px/1.6 Georgia,serif;color:#171916">“${esc(d.message)}”</p>` : ''}
-<p style="margin:22px 0 0;font:13px/1.6 Helvetica,Arial,sans-serif;color:#646464">Reply to this email to reach ${esc(d.name.split(' ')[0])} directly.${d.page ? ` Sent from <a href="${esc(d.page)}" style="color:#646464">${esc(d.page)}</a>.` : ''}</p>
+<p style="margin:22px 0 0;font:13px/1.6 Helvetica,Arial,sans-serif;color:#646464">${d.email ? `Reply to this email to reach ${esc(d.name.split(' ')[0])} directly.` : `Call ${esc(d.name.split(' ')[0])} back on ${esc(d.phone)}.`}${d.page ? ` Sent from <a href="${esc(d.page)}" style="color:#646464">${esc(d.page)}</a>.` : ''}</p>
 </td></tr></table>
-<p style="margin:16px 0 0;font:12px Helvetica,Arial,sans-serif;color:#90948c">SymphoLearn · Learn with SymphoZen</p>
+<p style="margin:16px 0 0;font:12px Helvetica,Arial,sans-serif;color:#90948c">SymphoZen Academia · Beyond Classrooms. Into Possibilities</p>
 </td></tr></table></body></html>`;
 	const details = [
-		`Email: ${d.email}`,
-		d.phone ? `Phone: ${d.phone}` : '',
+		`Enquiry: ${KINDS[d.kind]}`,
+		`Name: ${d.name}`,
+		`Phone: ${d.phone}`,
+		d.email ? `Email: ${d.email}` : '',
+		d.organisation ? `Organisation: ${d.organisation}` : '',
+		d.teamSize ? `Team size: ${d.teamSize}` : '',
+		d.courseTitle ? `Course: ${d.courseTitle}` : '',
+		d.mode ? `Mode: ${d.mode}` : '',
 		d.price ? `Price shown: ${d.price}` : '',
 		d.message ? `Note: “${d.message}”` : '',
 		`Received: ${when}`,
 		d.page ? `Page: ${d.page}` : ''
 	].filter(Boolean);
-	const text = [`${d.name} is interested in ${d.courseTitle}.`, '', ...details].join('\n');
+	const text = [subject, '', ...details].join('\n');
 	return { subject, html, text };
 }
 
@@ -133,13 +188,13 @@ export async function handleInterest(body, env) {
 		body: JSON.stringify({
 			from: env.from,
 			to,
-			reply_to: d.email,
+			...(d.email ? { reply_to: d.email } : {}),
 			subject: mail.subject,
 			html: mail.html,
 			text: mail.text,
 			tags: [
-				{ name: 'category', value: 'course_interest' },
-				{ name: 'course', value: d.courseId }
+				{ name: 'category', value: `enquiry_${d.kind}` },
+				...(d.courseId ? [{ name: 'course', value: d.courseId }] : [])
 			]
 		})
 	});

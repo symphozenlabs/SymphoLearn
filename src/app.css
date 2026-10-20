@@ -1,12 +1,14 @@
 @import 'tailwindcss';
 
 /* ──────────────────────────────────────────────────────────────
-   SYMPHOLEARN DESIGN SYSTEM
+   SYMPHOZEN ACADEMIA DESIGN SYSTEM
    The SymphoZen Labs brand, token for token (verified against
    symphozen.com's own :root): warm paper, ink, sage green ·
    Playfair Display 500 + Inter · hairline borders · long soft
    shadows · ease-out cubic-bezier(.22, 1, .36, 1).
-   Colours outside this palette are not used anywhere.
+   --green-400 is the Academia logo's green (same hue as -600,
+   lighter) — for accents on dark surfaces, never for small text
+   on light ones. Colours outside this palette are not used.
    ────────────────────────────────────────────────────────────── */
 
 :root {
@@ -14,6 +16,7 @@
 	--green-50: #f5f8f3;
 	--green-100: #edf4e9;
 	--green-300: #b8cea9;
+	--green-400: #7bbd5f;
 	--green-600: #5a8a45;
 	--green-700: #4d783b;
 
@@ -121,7 +124,10 @@
 	--duration-slow: 650ms; /* reveal / page */
 	--duration-page: 420ms; /* page transition */
 
-	--nav-height: 4.5rem;
+	/* header = announcement bar + main bar (the announcement bar slides away on scroll) */
+	--topbar: 2.25rem;
+	--bar-height: 4.5rem;
+	--nav-height: calc(var(--topbar) + var(--bar-height));
 
 	--noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cfilter id='a'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.34' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23a)' opacity='0.2'/%3E%3C/svg%3E");
 }

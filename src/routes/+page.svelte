@@ -1,32 +1,42 @@
 <script lang="ts">
 	import { ArrowRight } from '@lucide/svelte';
-	import HeroStory from '$lib/components/HeroStory.svelte';
+	import Hero from '$lib/components/home/Hero.svelte';
+	import JourneyStory from '$lib/components/home/JourneyStory.svelte';
+	import BrandLine from '$lib/components/home/BrandLine.svelte';
+	import Audiences from '$lib/components/home/Audiences.svelte';
 	import CourseGrid from '$lib/components/CourseGrid.svelte';
 	import CategoryIndex from '$lib/components/home/CategoryIndex.svelte';
-	import WhyPlatform from '$lib/components/home/WhyPlatform.svelte';
-	import ExperienceShowcase from '$lib/components/home/ExperienceShowcase.svelte';
-	import ClosingCta from '$lib/components/home/ClosingCta.svelte';
-	import BrandLine from '$lib/components/home/BrandLine.svelte';
+	import WhyAcademy from '$lib/components/home/WhyAcademy.svelte';
+	import TrainingModes from '$lib/components/home/TrainingModes.svelte';
+	import Journey from '$lib/components/home/Journey.svelte';
+	import Testimonials from '$lib/components/home/Testimonials.svelte';
+	import CorporateBand from '$lib/components/home/CorporateBand.svelte';
+	import ContactSection from '$lib/components/home/ContactSection.svelte';
+	import { BRAND } from '$lib/data/site';
+	import { site } from '$lib/data/catalog';
 	import { reveal } from '$lib/motion/actions';
 
 	let { data } = $props();
 </script>
 
 <svelte:head>
-	<title>SymphoLearn — Learning is a journey</title>
+	<title>{BRAND} — {site.tagline}</title>
+	<meta name="description" content="{BRAND}: mentor-led career programs in development, data, AI, design and marketing — live online, classroom and hybrid, with projects, certification and career support. Book a free demo." />
 </svelte:head>
 
-<HeroStory />
+<Hero />
+<JourneyStory />
 <BrandLine />
+<Audiences />
 
 <section class="featured" use:reveal>
 	<div class="container-x">
 		<header class="head editorial-grid">
-			<p class="eyebrow" data-reveal>Featured courses</p>
-			<h2 class="t-h2" data-reveal>Courses worth<br />your <em class="italic-accent">time.</em></h2>
+			<p class="eyebrow" data-reveal>Popular programs</p>
+			<h2 class="t-h2" data-reveal>Programs built for<br />the <em class="italic-accent">job market.</em></h2>
 			<div class="aside" data-reveal>
-				<p>Hand-picked paths from people who do this work every day. Each one ends with something you can show.</p>
-				<a href="/courses" class="more">All courses <ArrowRight size={15} strokeWidth={1.6} /></a>
+				<p>Each program is taught live by practitioners and ends with a capstone project you can show in interviews.</p>
+				<a href="/courses" class="more">All programs & fees <ArrowRight size={15} strokeWidth={1.6} /></a>
 			</div>
 		</header>
 
@@ -35,9 +45,12 @@
 </section>
 
 <CategoryIndex />
-<WhyPlatform />
-<ExperienceShowcase />
-<ClosingCta />
+<WhyAcademy />
+<TrainingModes />
+<Journey />
+<Testimonials />
+<CorporateBand />
+<ContactSection />
 
 <style>
 	.featured {
@@ -52,7 +65,7 @@
 		grid-column: 1 / -1;
 	}
 	.head h2 {
-		grid-column: 2 / span 6;
+		grid-column: 1 / span 7;
 	}
 	.aside {
 		grid-column: 9 / span 4;

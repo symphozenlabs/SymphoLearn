@@ -2,7 +2,7 @@
  * Firebase Function behind `/api/interest` (see the rewrite in ../firebase.json).
  *
  *   firebase functions:secrets:set RESEND_API_KEY
- *   # functions/.env  →  RESEND_FROM="SymphoLearn <hello@your-domain.com>"
+ *   # functions/.env  →  RESEND_FROM="SymphoZen Academia <hello@your-domain.com>"
  *   #                    INTEREST_TO=team@your-domain.com
  */
 import { onRequest } from 'firebase-functions/v2/https';

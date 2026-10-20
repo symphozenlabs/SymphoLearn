@@ -707,4 +707,18 @@ export const courses: Course[] = [
 	}
 ];
 
-export const SEEDED_COURSE_ID = FS;
+/* ── Career roles each program prepares for ─────────────────── */
+
+const careers: Record<string, string[]> = {
+	[FS]: ['Full Stack Developer', 'Front-end Developer', 'Node.js Developer', 'Web Developer'],
+	'design-systems-in-practice': ['Product Designer', 'UI Designer', 'Design Systems Designer', 'UX Engineer'],
+	'applied-machine-learning': ['Machine Learning Engineer', 'Data Scientist', 'ML Ops Engineer', 'AI Analyst'],
+	'data-storytelling': ['Data Analyst', 'BI Analyst', 'Reporting Analyst', 'Business Analyst'],
+	'building-with-llms': ['AI Engineer', 'LLM Application Developer', 'Generative AI Developer'],
+	'product-strategy-fundamentals': ['Associate Product Manager', 'Product Manager', 'Product Analyst'],
+	'brand-marketing-essentials': ['Brand Executive', 'Marketing Associate', 'Digital Marketing Executive'],
+	'the-art-of-light': ['Photographer', 'Content Creator', 'Visual Storyteller'],
+	'motion-for-interfaces': ['Motion Designer', 'UI Designer', 'Front-end Developer'],
+	'typescript-in-depth': ['TypeScript Developer', 'Front-end Engineer', 'Full Stack Developer']
+};
+for (const c of courses) c.careers ??= careers[c.id];

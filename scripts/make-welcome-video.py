@@ -1,4 +1,4 @@
-"""Render the SymphoLearn 'Welcome to the Course' lesson video with ffmpeg."""
+"""Render the SymphoZen Academia 'Welcome to the Course' sample-class video with ffmpeg."""
 # Needs ffmpeg plus playfair.ttf and inter.ttf (Google Fonts, OFL) in the working directory.
 import subprocess
 
@@ -38,7 +38,7 @@ filters += [
     f"drawbox=x=0:y=88:w={W}:h=1:color={BORDER}:t=fill",
     f"drawbox=x=0:y={H - 88}:w={W}:h=1:color={BORDER}:t=fill",
     f"drawbox=x=120:y=40:w=10:h=10:color={GREEN}:t=fill",
-    f"drawtext=fontfile=inter.ttf:text='SYMPHOLEARN':fontsize=14:fontcolor={INK}:x=142:y=38",
+    f"drawtext=fontfile=inter.ttf:text='SYMPHOZEN ACADEMIA':fontsize=14:fontcolor={INK}:x=142:y=38",
     f"drawtext=fontfile=inter.ttf:text='LESSON 01 — WELCOME TO THE COURSE':fontsize=13:fontcolor={MUTED}:x=w-tw-120:y=39",
     # lesson progress rule along the bottom hairline
     f"drawtext=fontfile=inter.ttf:text='FULL STACK WEB DEVELOPMENT':fontsize=13:fontcolor={MUTED}:x=120:y={H - 56}",
