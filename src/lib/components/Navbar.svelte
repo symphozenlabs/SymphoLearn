@@ -1,12 +1,26 @@
 <script lang="ts">
-	import { page } from '$app/state';
-	import { afterNavigate } from '$app/navigation';
-	import { Search, ChevronDown, Phone, Mail, MessageCircle, ArrowRight } from '@lucide/svelte';
-	import Logo from './Logo.svelte';
-	import Button from './Button.svelte';
-	import SearchDialog from './SearchDialog.svelte';
-	import { categories, courses, site, telHref, mailHref, whatsappHref } from '$lib/data/catalog';
-	import { enquiry } from '$lib/stores/enquiry.svelte';
+	import { page } from "$app/state";
+	import { afterNavigate } from "$app/navigation";
+	import {
+		Search,
+		ChevronDown,
+		Phone,
+		Mail,
+		MessageCircle,
+		ArrowRight,
+	} from "@lucide/svelte";
+	import Logo from "./Logo.svelte";
+	import Button from "./Button.svelte";
+	import SearchDialog from "./SearchDialog.svelte";
+	import {
+		categories,
+		courses,
+		site,
+		telHref,
+		mailHref,
+		whatsappHref,
+	} from "$lib/data/catalog";
+	import { enquiry } from "$lib/stores/enquiry.svelte";
 
 	let scrolled = $state(false);
 	let menuOpen = $state(false);
@@ -16,13 +30,17 @@
 
 	const wa = whatsappHref();
 	const links = [
-		{ href: '/corporate-training', label: 'Corporate training' },
-		{ href: '/about', label: 'About' },
-		{ href: '/contact', label: 'Contact' }
+		{ href: "/corporate-training", label: "Corporate training" },
+		{ href: "/about", label: "About" },
+		{ href: "/contact", label: "Contact" },
 	];
-	const groups = categories.map((c) => ({ ...c, list: courses.filter((x) => x.category === c.id) }));
+	const groups = categories.map((c) => ({
+		...c,
+		list: courses.filter((x) => x.category === c.id),
+	}));
 
-	const isActive = (href: string) => page.url.pathname === href || page.url.pathname.startsWith(href + '/');
+	const isActive = (href: string) =>
+		page.url.pathname === href || page.url.pathname.startsWith(href + "/");
 
 	afterNavigate(() => {
 		menuOpen = false;
@@ -30,28 +48,34 @@
 	});
 
 	$effect(() => {
-		document.documentElement.style.overflow = menuOpen ? 'hidden' : '';
+		document.documentElement.style.overflow = menuOpen ? "hidden" : "";
 	});
 
 	function onwindowkeydown(e: KeyboardEvent) {
-		const typing = e.target instanceof HTMLElement && e.target.closest('input, textarea, select, [contenteditable]');
-		if ((e.key === 'k' && (e.metaKey || e.ctrlKey)) || (e.key === '/' && !typing)) {
+		const typing =
+			e.target instanceof HTMLElement &&
+			e.target.closest("input, textarea, select, [contenteditable]");
+		if (
+			(e.key === "k" && (e.metaKey || e.ctrlKey)) ||
+			(e.key === "/" && !typing)
+		) {
 			e.preventDefault();
 			searchOpen = true;
 		}
-		if (e.key === 'Escape') {
+		if (e.key === "Escape") {
 			progOpen = false;
 			menuOpen = false;
 		}
 	}
 
 	function onwindowclick(e: MouseEvent) {
-		if (progOpen && progWrap && !progWrap.contains(e.target as Node)) progOpen = false;
+		if (progOpen && progWrap && !progWrap.contains(e.target as Node))
+			progOpen = false;
 	}
 
 	function demo() {
 		menuOpen = false;
-		enquiry.show({ kind: 'demo' });
+		enquiry.show({ kind: "demo" });
 	}
 </script>
 
@@ -67,39 +91,60 @@
 			<p class="ann">
 				<span class="dot" aria-hidden="true"></span>
 				<span class="ann-t">{site.announcement}</span>
-				<button class="ann-cta" onclick={demo}>Book now <ArrowRight size={12} strokeWidth={2} /></button>
+				<button class="ann-cta" onclick={demo}
+					>Book now <ArrowRight size={12} strokeWidth={2} /></button
+				>
 			</p>
 			<div class="reach">
-				{#if telHref}<a href={telHref}><Phone size={13} strokeWidth={1.8} /> {site.phone}</a>{/if}
-				{#if mailHref}<a href={mailHref} class="mail"><Mail size={13} strokeWidth={1.8} /> {site.contactEmail}</a>{/if}
-				{#if wa}<a href={wa} target="_blank" rel="noopener"><MessageCircle size={13} strokeWidth={1.8} /> WhatsApp</a>{/if}
+				{#if telHref}<a href={telHref}
+						><Phone size={13} strokeWidth={1.8} /> {site.phone}</a
+					>{/if}
+				{#if mailHref}<a href={mailHref} class="mail"
+						><Mail size={13} strokeWidth={1.8} />
+						{site.contactEmail}</a
+					>{/if}
+				{#if wa}<a href={wa} target="_blank" rel="noopener"
+						><MessageCircle size={13} strokeWidth={1.8} /> WhatsApp</a
+					>{/if}
 			</div>
 		</div>
 	</div>
 
 	<div class="bar container-x">
-		<Logo tagline height={32} />
+		<Logo tagline height={24} />
 
 		<nav class="primary" aria-label="Primary">
 			<div class="prog" bind:this={progWrap}>
 				<button
 					class="link"
-					class:active={isActive('/courses')}
+					class:active={isActive("/courses")}
 					aria-expanded={progOpen}
 					aria-controls="prog-menu"
 					onclick={() => (progOpen = !progOpen)}
 				>
-					Programs <ChevronDown size={14} strokeWidth={1.75} class="chev" />
+					Programs <ChevronDown
+						size={14}
+						strokeWidth={1.75}
+						class="chev"
+					/>
 				</button>
 				{#if progOpen}
 					<div id="prog-menu" class="mega">
 						<div class="mega-cols">
 							{#each groups as g, i (g.id)}
 								<div class="grp" style="--i:{i}">
-									<a class="grp-h" href="/courses?category={g.id}">{g.name}</a>
+									<a
+										class="grp-h"
+										href="/courses?category={g.id}"
+										>{g.name}</a
+									>
 									<ul>
 										{#each g.list as c (c.id)}
-											<li><a href="/courses/{c.id}">{c.title}</a></li>
+											<li>
+												<a href="/courses/{c.id}"
+													>{c.title}</a
+												>
+											</li>
 										{/each}
 									</ul>
 								</div>
@@ -107,22 +152,45 @@
 						</div>
 						<aside class="mega-side">
 							<p class="eyebrow">Not sure where to start?</p>
-							<p class="side-t">Talk to a counsellor — it’s free.</p>
-							<Button size="sm" arrow onclick={() => { progOpen = false; enquiry.show({ kind: 'counselling' }); }}>Free counselling</Button>
-							<a class="all" href="/courses">View all {courses.length} programs <ArrowRight size={14} strokeWidth={1.7} /></a>
+							<p class="side-t">
+								Talk to a counsellor — it’s free.
+							</p>
+							<Button
+								size="sm"
+								arrow
+								onclick={() => {
+									progOpen = false;
+									enquiry.show({ kind: "counselling" });
+								}}>Free counselling</Button
+							>
+							<a class="all" href="/courses"
+								>View all {courses.length} programs <ArrowRight
+									size={14}
+									strokeWidth={1.7}
+								/></a
+							>
 						</aside>
 					</div>
 				{/if}
 			</div>
 			{#each links as link (link.href)}
-				<a href={link.href} class="link" class:active={isActive(link.href)} aria-current={isActive(link.href) ? 'page' : undefined}>
+				<a
+					href={link.href}
+					class="link"
+					class:active={isActive(link.href)}
+					aria-current={isActive(link.href) ? "page" : undefined}
+				>
 					{link.label}
 				</a>
 			{/each}
 		</nav>
 
 		<div class="actions">
-			<button class="search-btn" onclick={() => (searchOpen = true)} aria-label="Search programs (Ctrl K)">
+			<button
+				class="search-btn"
+				onclick={() => (searchOpen = true)}
+				aria-label="Search programs (Ctrl K)"
+			>
 				<Search size={17} strokeWidth={1.6} />
 			</button>
 			<Button size="sm" arrow onclick={demo}>Book a free demo</Button>
@@ -130,7 +198,7 @@
 
 		<button
 			class="burger"
-			aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+			aria-label={menuOpen ? "Close menu" : "Open menu"}
 			aria-expanded={menuOpen}
 			aria-controls="mobile-menu"
 			onclick={() => (menuOpen = !menuOpen)}
@@ -140,23 +208,43 @@
 	</div>
 </header>
 
-<div id="mobile-menu" class="sheet" class:open={menuOpen} aria-hidden={!menuOpen} inert={!menuOpen}>
+<div
+	id="mobile-menu"
+	class="sheet"
+	class:open={menuOpen}
+	aria-hidden={!menuOpen}
+	inert={!menuOpen}
+>
 	<nav aria-label="Mobile" class="container-x">
 		<ul class="big">
 			<li style="--i:0"><a href="/courses">Programs</a></li>
 			{#each links as link, i (link.href)}
-				<li style="--i:{i + 1}"><a href={link.href}>{link.label}</a></li>
+				<li style="--i:{i + 1}">
+					<a href={link.href}>{link.label}</a>
+				</li>
 			{/each}
 			<li style="--i:4">
-				<button onclick={() => { menuOpen = false; searchOpen = true; }}>Search</button>
+				<button
+					onclick={() => {
+						menuOpen = false;
+						searchOpen = true;
+					}}>Search</button
+				>
 			</li>
 		</ul>
 		<div class="sheet-foot" style="--i:5">
 			<Button arrow full onclick={demo}>Book a free demo</Button>
 			<div class="sheet-reach">
-				{#if telHref}<a href={telHref}><Phone size={14} strokeWidth={1.8} /> {site.phone}</a>{/if}
-				{#if wa}<a href={wa} target="_blank" rel="noopener"><MessageCircle size={14} strokeWidth={1.8} /> WhatsApp</a>{/if}
-				{#if mailHref}<a href={mailHref}><Mail size={14} strokeWidth={1.8} /> {site.contactEmail}</a>{/if}
+				{#if telHref}<a href={telHref}
+						><Phone size={14} strokeWidth={1.8} /> {site.phone}</a
+					>{/if}
+				{#if wa}<a href={wa} target="_blank" rel="noopener"
+						><MessageCircle size={14} strokeWidth={1.8} /> WhatsApp</a
+					>{/if}
+				{#if mailHref}<a href={mailHref}
+						><Mail size={14} strokeWidth={1.8} />
+						{site.contactEmail}</a
+					>{/if}
 			</div>
 		</div>
 	</nav>
@@ -261,7 +349,10 @@
 		gap: 2.5rem;
 		border-bottom: 1px solid transparent;
 		max-width: none;
-		padding-inline: max(var(--gutter), calc((100vw - var(--container)) / 2 + var(--gutter)));
+		padding-inline: max(
+			var(--gutter),
+			calc((100vw - var(--container)) / 2 + var(--gutter))
+		);
 		transition:
 			background var(--duration-slow) var(--ease-out),
 			border-color var(--duration-slow) var(--ease-out),
@@ -298,12 +389,12 @@
 	}
 	.link:hover,
 	.link.active,
-	.link[aria-expanded='true'] {
+	.link[aria-expanded="true"] {
 		color: var(--ink);
 	}
 	/* active indicator — a hairline that draws in from the left */
 	.link::after {
-		content: '';
+		content: "";
 		position: absolute;
 		left: 0;
 		right: 0;
@@ -325,7 +416,7 @@
 	.link :global(.chev) {
 		transition: transform var(--duration-normal) var(--ease-out);
 	}
-	.link[aria-expanded='true'] :global(.chev) {
+	.link[aria-expanded="true"] :global(.chev) {
 		transform: rotate(180deg);
 	}
 
