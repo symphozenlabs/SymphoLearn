@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url';
 import { defineCliConfig } from 'sanity/cli';
 
 export default defineCliConfig({
@@ -6,5 +7,11 @@ export default defineCliConfig({
 		dataset: process.env.SANITY_STUDIO_DATASET ?? 'production'
 	},
 	// asset URLs in the build start with /studio, matching the config's basePath
-	project: { basePath: '/studio' }
+	project: { basePath: '/studio' },
+	// Pin Vite to the studio's own tsconfig so it never walks up into the
+	// SvelteKit root tsconfig (which extends the generated .svelte-kit/tsconfig.json)
+	vite: (config) => ({
+		...config,
+		tsconfig: fileURLToPath(new URL('./tsconfig.json', import.meta.url))
+	})
 });

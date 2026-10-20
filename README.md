@@ -91,8 +91,9 @@ Locally, put the same three values in `.env`. Without a key, the email is printe
 
 `static/brand/` holds the assets derived from the master artwork `SymphoZen Academia Logo.png`. The lotus-and-mortarboard mark, "SymphoZen" and the bold green "Academia" are used as drawn:
 
-- `academia-wordmark.png` / `-on-dark.png`: mark + name, used in the header (charcoal or white "SymphoZen")
-- `academia-logo.png` / `-on-dark.png`: the full lockup with the *Beyond Classrooms. Into Possibilities* line, used in the footer
+- `academia-logo.svg` / `-on-dark.svg`: the full lockup with the *Beyond Classrooms. Into Possibilities* line, used in the header and footer (charcoal or white text, green "Zen")
+- `academia-wordmark.svg` / `-on-dark.svg`: the same lockup without the tagline
+- `.png` copies of both, rendered from the SVG master (`SymphoZen Academia Logo.svg`), for social previews
 - `academia-mark.png`: the lotus alone (marquee, certificate, watermark)
 - favicon, apple-touch and manifest icons: a white lotus on a brand-green tile
 

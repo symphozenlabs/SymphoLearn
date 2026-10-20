@@ -1,7 +1,7 @@
 <!--
 	Logo — the SymphoZen Academia lockup: the lotus-and-mortarboard mark,
 	"SymphoZen" and the bold green "Academia". Files in /static/brand are derived
-	from the master artwork (SymphoZen Academia Logo.png).
+	from the master artwork (SymphoZen Academia Logo.svg).
 -->
 <script lang="ts">
 	import { BRAND } from '$lib/data/site';
@@ -22,8 +22,8 @@
 	// intrinsic sizes of the artwork
 	const ART = {
 		mark: { w: 512, h: 512, src: () => '/brand/academia-mark.png' },
-		word: { w: 1417, h: 160, src: (t: string) => `/brand/academia-wordmark${t === 'paper' ? '-on-dark' : ''}.png` },
-		full: { w: 2126, h: 240, src: (t: string) => `/brand/academia-logo${t === 'paper' ? '-on-dark' : ''}.png` }
+		word: { w: 8266, h: 948, src: (t: string) => `/brand/academia-wordmark${t === 'paper' ? '-on-dark' : ''}.svg` },
+		full: { w: 8266, h: 948, src: (t: string) => `/brand/academia-logo${t === 'paper' ? '-on-dark' : ''}.svg` }
 	};
 	const art = $derived(compact ? ART.mark : tagline ? ART.full : ART.word);
 </script>

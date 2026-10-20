@@ -78,7 +78,7 @@
 	</div>
 
 	<div class="bar container-x">
-		<Logo />
+		<Logo tagline height={40} />
 
 		<nav class="primary" aria-label="Primary">
 			<div class="prog" bind:this={progWrap}>
@@ -249,6 +249,11 @@
 	}
 
 	/* — main bar — */
+	/* the full lockup (same as the footer) is wide: let it shrink before the menu wraps */
+	.bar :global(a.logo) {
+		flex: 0 1 auto;
+		min-width: 0;
+	}
 	.bar {
 		height: var(--bar-height);
 		display: flex;
