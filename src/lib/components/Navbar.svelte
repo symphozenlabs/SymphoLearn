@@ -78,7 +78,7 @@
 	</div>
 
 	<div class="bar container-x">
-		<Logo tagline height={40} />
+		<Logo tagline height={32} />
 
 		<nav class="primary" aria-label="Primary">
 			<div class="prog" bind:this={progWrap}>
@@ -264,13 +264,14 @@
 		padding-inline: max(var(--gutter), calc((100vw - var(--container)) / 2 + var(--gutter)));
 		transition:
 			background var(--duration-slow) var(--ease-out),
-			border-color var(--duration-slow) var(--ease-out);
+			border-color var(--duration-slow) var(--ease-out),
+			box-shadow var(--duration-slow) var(--ease-out);
 	}
+	/* solid once scrolled: a see-through bar let big headings bleed behind the logo */
 	.scrolled .bar {
-		background: rgb(252 252 250 / 0.82);
+		background: var(--background);
 		border-bottom-color: var(--border);
-		backdrop-filter: blur(14px) saturate(1.2);
-		-webkit-backdrop-filter: blur(14px) saturate(1.2);
+		box-shadow: 0 8px 24px rgb(36 36 36 / 0.05);
 	}
 	.menu-open .bar {
 		background: var(--background);
