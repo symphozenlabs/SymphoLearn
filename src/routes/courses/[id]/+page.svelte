@@ -89,13 +89,20 @@
 		<div class="hero-copy">
 			<h1 class="t-h1" data-reveal>{course.title}</h1>
 			<p class="sub" data-reveal>{course.subtitle}</p>
-			<p class="rating" data-reveal>
-				<span class="stars" aria-hidden="true">
-					{#each Array(5) as _, k (k)}<Star size={14} strokeWidth={0} fill={k < Math.round(course.rating) ? 'currentColor' : 'var(--border-strong)'} />{/each}
-				</span>
-				<strong>{course.rating.toFixed(1)}</strong>
-				<span>({course.ratingCount.toLocaleString(site.locale)} reviews) · {formatStudents(course.students)} learners</span>
-			</p>
+			{#if course.ratingCount > 0}
+				<p class="rating" data-reveal>
+					<span class="stars" aria-hidden="true">
+						{#each Array(5) as _, k (k)}<Star size={14} strokeWidth={0} fill={k < Math.round(course.rating) ? 'currentColor' : 'var(--border-strong)'} />{/each}
+					</span>
+					<strong>{course.rating.toFixed(1)}</strong>
+					<span>({course.ratingCount.toLocaleString(site.locale)} reviews) · {formatStudents(course.students)} learners</span>
+				</p>
+			{:else}
+				<p class="rating" data-reveal>
+					<span class="new">New batch</span>
+					<span>{weeks} weeks · live & mentor-led · {course.level}</span>
+				</p>
+			{/if}
 
 			<div class="cta" data-reveal>
 				<Button size="lg" arrow magnetic onclick={demo}>Book a free demo</Button>
@@ -295,7 +302,11 @@
 					<li><MonitorPlay size={15} strokeWidth={1.5} /> Every session recorded</li>
 					<li><Award size={15} strokeWidth={1.5} /> Certificate of completion</li>
 					<li><Headphones size={15} strokeWidth={1.5} /> Doubt support & career help</li>
-					<li><Users size={15} strokeWidth={1.5} /> {formatStudents(course.students)} learners so far</li>
+					{#if course.students > 0}
+						<li><Users size={15} strokeWidth={1.5} /> {formatStudents(course.students)} learners so far</li>
+					{:else}
+						<li><Users size={15} strokeWidth={1.5} /> Free demo class before you pay</li>
+					{/if}
 				</ul>
 			</div>
 		</aside>
@@ -359,6 +370,14 @@
 		gap: 0.5rem;
 		font-size: 0.88rem;
 		color: var(--text-muted);
+	}
+	.rating .new {
+		padding: 0.2rem 0.6rem;
+		border-radius: var(--radius-pill);
+		background: var(--green-100);
+		color: var(--green-700);
+		font-size: 0.78rem;
+		font-weight: 600;
 	}
 	.rating strong {
 		color: var(--ink);

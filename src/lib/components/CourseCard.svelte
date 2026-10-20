@@ -58,7 +58,11 @@
 		<div class="facts">
 			<span><Clock size={14} strokeWidth={1.6} aria-hidden="true" />{course.duration}</span>
 			<span><Layers size={14} strokeWidth={1.6} aria-hidden="true" />{course.sections.length} modules</span>
-			<span class="rating"><Star size={13} strokeWidth={0} fill="currentColor" aria-hidden="true" />{course.rating.toFixed(1)}</span>
+			{#if course.ratingCount > 0}
+				<span class="rating"><Star size={13} strokeWidth={0} fill="currentColor" aria-hidden="true" />{course.rating.toFixed(1)}</span>
+			{:else}
+				<span class="new">New batch</span>
+			{/if}
 		</div>
 
 		<p class="how">
@@ -183,6 +187,11 @@
 		background: var(--surface-soft);
 		font-size: 0.76rem;
 		color: var(--text-secondary);
+	}
+	.facts .new {
+		background: var(--green-100);
+		color: var(--green-700);
+		font-weight: 600;
 	}
 	.facts .rating {
 		background: var(--green-100);

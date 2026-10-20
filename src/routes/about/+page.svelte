@@ -3,7 +3,7 @@
 	import TrainingModes from '$lib/components/home/TrainingModes.svelte';
 	import Journey from '$lib/components/home/Journey.svelte';
 	import { BRAND } from '$lib/data/site';
-	import { site, stats } from '$lib/data/catalog';
+	import { site, stats, mentorProof } from '$lib/data/catalog';
 	import { reveal } from '$lib/motion/actions';
 	import { enquiry } from '$lib/stores/enquiry.svelte';
 
@@ -38,10 +38,18 @@
 
 <section class="numbers container-x" use:reveal>
 	<dl>
-		<div data-reveal><dt>Learners trained</dt><dd class="t-num">{stats.learnersLabel}</dd></div>
+		{#if stats.hasLearners}
+			<div data-reveal><dt>Learners trained</dt><dd class="t-num">{stats.learnersLabel}</dd></div>
+		{:else}
+			<div data-reveal><dt>Years in industry</dt><dd class="t-num">{mentorProof.years}<small>+</small></dd></div>
+		{/if}
 		<div data-reveal><dt>Career programs</dt><dd class="t-num">{stats.programs}</dd></div>
 		<div data-reveal><dt>Disciplines</dt><dd class="t-num">{stats.disciplines}</dd></div>
-		<div data-reveal><dt>Average rating</dt><dd class="t-num">{stats.rating.toFixed(1)}<small>/5</small></dd></div>
+		{#if stats.hasRatings}
+			<div data-reveal><dt>Average rating</dt><dd class="t-num">{stats.rating.toFixed(1)}<small>/5</small></dd></div>
+		{:else}
+			<div data-reveal><dt>Guest lectures</dt><dd class="t-num">{mentorProof.lectures}<small>+</small></dd></div>
+		{/if}
 	</dl>
 </section>
 

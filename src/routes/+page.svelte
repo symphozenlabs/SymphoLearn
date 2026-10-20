@@ -21,7 +21,7 @@
 
 <svelte:head>
 	<title>{BRAND} — {site.tagline}</title>
-	<meta name="description" content="{BRAND}: mentor-led career programs in development, data, AI, design and marketing — live online, classroom and hybrid, with projects, certification and career support. Book a free demo." />
+	<meta name="description" content="{BRAND}: mentor-led career programs in UI/UX design, front-end and full-stack development and AI — live online, classroom and hybrid, with projects, certification and career support. Book a free demo." />
 </svelte:head>
 
 <Hero />

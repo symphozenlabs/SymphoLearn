@@ -1,5 +1,5 @@
 <!--
-	Disciplines as a bento of tiles. Each tile borrows its first course's cover
+	Disciplines as a bento of tiles. Each tile shows its discipline artwork (or its first course's cover)
 	and reveals the discipline's description on hover / focus.
 -->
 <script lang="ts">
@@ -10,9 +10,23 @@
 	const WORDS = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve'];
 	const count = WORDS[categories.length] ?? String(categories.length);
 
+	// text-free artwork per discipline (static/images/disciplines); others borrow their first course's cover
+	const ART: Record<string, 'ink' | 'paper' | 'green' | 'warm'> = {
+		design: 'paper',
+		development: 'ink',
+		'full-stack': 'green',
+		'artificial-intelligence': 'ink',
+		career: 'warm'
+	};
 	const tiles = categories.map((c) => {
 		const list = courses.filter((x) => x.category === c.id);
-		return { ...c, count: list.length, cover: list[0]?.thumbnail ?? '', tone: list[0]?.tone ?? 'paper' };
+		const art = ART[c.id];
+		return {
+			...c,
+			count: list.length,
+			cover: art ? `/images/disciplines/${c.id}.svg` : (list[0]?.thumbnail ?? ''),
+			tone: art ?? list[0]?.tone ?? 'paper'
+		};
 	});
 </script>
 

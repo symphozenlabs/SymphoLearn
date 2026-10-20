@@ -2,7 +2,7 @@
 	import { reveal, countUp } from '$lib/motion/actions';
 	import Button from '../Button.svelte';
 	import { features } from '$lib/data/academy';
-	import { stats } from '$lib/data/catalog';
+	import { stats, mentorProof } from '$lib/data/catalog';
 	import { enquiry } from '$lib/stores/enquiry.svelte';
 
 	const learnersK = Math.floor(stats.learners / 1000);
@@ -12,13 +12,25 @@
 	<div class="container-x editorial-grid">
 		<aside class="visual" data-reveal>
 			<div class="panel">
-				<p class="eyebrow">Our learners, in numbers</p>
-				<div class="stat">
-					<span class="t-num big"><span use:countUp={{ to: learnersK, pad: 1 }}>0</span><small>k+</small></span>
-					<span class="cap">learners trained across {stats.programs} career programs and {stats.disciplines} disciplines.</span>
-				</div>
+				{#if stats.hasLearners}
+					<p class="eyebrow">Our learners, in numbers</p>
+					<div class="stat">
+						<span class="t-num big"><span use:countUp={{ to: learnersK, pad: 1 }}>0</span><small>k+</small></span>
+						<span class="cap">learners trained across {stats.programs} career programs and {stats.disciplines} disciplines.</span>
+					</div>
+				{:else}
+					<p class="eyebrow">Your mentor, in numbers</p>
+					<div class="stat">
+						<span class="t-num big"><span use:countUp={{ to: mentorProof.years }}>00</span><small>+</small></span>
+						<span class="cap">years building enterprise, healthcare and edtech products — now teaching what companies hire for.</span>
+					</div>
+				{/if}
 				<div class="rows">
-					<div><span class="t-num">{stats.rating.toFixed(1)}</span><span>average rating</span></div>
+					{#if stats.hasRatings}
+						<div><span class="t-num">{stats.rating.toFixed(1)}</span><span>average rating</span></div>
+					{:else}
+						<div><span class="t-num">{mentorProof.panels}+</span><span>interview panels</span></div>
+					{/if}
 					<div><span class="t-num"><span use:countUp={{ to: stats.programs }}>00</span></span><span>career programs</span></div>
 					<div><span class="t-num">1:1</span><span>mentor reviews</span></div>
 				</div>

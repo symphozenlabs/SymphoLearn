@@ -86,7 +86,7 @@ export const audiences = [
 ];
 
 export const corporateOfferings = [
-	{ title: 'Employee upskilling', body: 'Role-based programs in development, data, AI, design and marketing — mapped to the skills your teams need next.' },
+	{ title: 'Employee upskilling', body: 'Role-based programs in design, front-end and full-stack development and AI — mapped to the skills your teams need next.' },
 	{ title: 'Campus programs', body: 'Industry-readiness programs and faculty development for colleges, aligned to your academic calendar.' },
 	{ title: 'Custom curriculum', body: 'We co-design content around your stack, your products and your workflows — with your own case studies.' },
 	{ title: 'Workshops & bootcamps', body: 'One-day workshops to multi-week bootcamps for launches, new tools and leadership teams.' }

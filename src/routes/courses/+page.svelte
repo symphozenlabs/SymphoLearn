@@ -12,7 +12,7 @@
 
 	let { data } = $props();
 
-	type Sort = 'popular' | 'rating' | 'newest' | 'shortest';
+	type Sort = 'popular' | 'rating' | 'newest' | 'shortest' | 'price';
 	type Length = 'any' | 'short' | 'medium' | 'long';
 
 	let q = $state('');
@@ -23,18 +23,22 @@
 	let layout = $state<'catalog' | 'list'>('catalog');
 
 	const levels: (Level | 'all')[] = ['all', 'Beginner', 'Intermediate', 'Advanced'];
+	// lengths are total live instruction hours (about 4 a week)
+	const SHORT = 20;
+	const LONG = 40;
 	const lengths: { id: Length; label: string }[] = [
 		{ id: 'any', label: 'Any length' },
-		{ id: 'short', label: 'Under 6 hours' },
-		{ id: 'medium', label: '6 – 10 hours' },
-		{ id: 'long', label: '10 hours +' }
+		{ id: 'short', label: `Up to ${SHORT / 4} weeks` },
+		{ id: 'medium', label: `${SHORT / 4 + 1} – ${LONG / 4} weeks` },
+		{ id: 'long', label: `${LONG / 4 + 1} weeks +` }
 	];
-	const sorts: { id: Sort; label: string }[] = [
-		{ id: 'popular', label: 'Most popular' },
-		{ id: 'rating', label: 'Highest rated' },
-		{ id: 'newest', label: 'Recently updated' },
+	const rated = $derived(data.courses.some((c) => c.ratingCount > 0));
+	const sorts: { id: Sort; label: string }[] = $derived([
+		{ id: 'popular', label: rated ? 'Most popular' : 'Recommended' },
+		...(rated ? [{ id: 'rating' as Sort, label: 'Highest rated' }] : []),
+		{ id: 'price', label: 'Lowest fee' },
 		{ id: 'shortest', label: 'Shortest first' }
-	];
+	]);
 
 	const hours = (c: Course) => {
 		const [h = '0', m = '0'] = c.duration.replace(/[hm]/g, '').split(' ');
@@ -47,17 +51,18 @@
 			if (category !== 'all' && c.category !== category) return false;
 			if (level !== 'all' && c.level !== level) return false;
 			const h = hours(c);
-			if (length === 'short' && h >= 6) return false;
-			if (length === 'medium' && (h < 6 || h > 10)) return false;
-			if (length === 'long' && h <= 10) return false;
+			if (length === 'short' && h > SHORT) return false;
+			if (length === 'medium' && (h <= SHORT || h > LONG)) return false;
+			if (length === 'long' && h <= LONG) return false;
 			if (!term) return true;
 			return [c.title, c.subtitle, c.instructor.name, ...c.skills].join(' ').toLowerCase().includes(term);
 		});
 		const by: Record<Sort, (a: Course, b: Course) => number> = {
-			popular: (a, b) => b.students - a.students,
+			popular: (a, b) => b.students - a.students || data.courses.indexOf(a) - data.courses.indexOf(b),
 			rating: (a, b) => b.rating - a.rating || b.ratingCount - a.ratingCount,
 			newest: (a, b) => b.updated.localeCompare(a.updated),
-			shortest: (a, b) => hours(a) - hours(b)
+			shortest: (a, b) => hours(a) - hours(b),
+			price: (a, b) => a.price.offer - b.price.offer
 		};
 		return [...list].sort(by[sort]);
 	});

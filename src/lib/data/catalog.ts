@@ -56,5 +56,17 @@ export const stats = {
 	/** "60k+" style */
 	learnersLabel: learners >= 1000 ? `${Math.floor(learners / 1000)}k+` : `${learners}`,
 	rating: ratings ? courses.reduce((n, c) => n + c.rating * c.ratingCount, 0) / ratings : 0,
-	reviews: ratings
+	reviews: ratings,
+	/** only show learner counts and ratings once there are real ones to show */
+	hasRatings: ratings > 0,
+	hasLearners: learners >= 100,
+	/** the most affordable program's offer price */
+	fromPrice: courses.length ? Math.min(...courses.map((c) => c.price.offer)) : 0
 };
+
+/** Price formatted in the site currency, e.g. "₹4,999" */
+export const money = (n: number) =>
+	new Intl.NumberFormat(site.locale, { style: 'currency', currency: site.currency, maximumFractionDigits: 0 }).format(n);
+
+/** The lead mentor's track record — real numbers shown until the academy has its own learner stats. */
+export const mentorProof = { years: 13, lectures: 30, panels: 30 };

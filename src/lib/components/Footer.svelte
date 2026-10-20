@@ -8,7 +8,9 @@
 	import { enquiry } from '$lib/stores/enquiry.svelte';
 
 	const wa = whatsappHref();
-	const popular = [...courses].sort((a, b) => b.students - a.students).slice(0, 6);
+	const popular = [...courses]
+		.sort((a, b) => Number(!!b.featured) - Number(!!a.featured) || b.students - a.students)
+		.slice(0, 6);
 </script>
 
 <footer class="footer" use:reveal>

@@ -3,10 +3,10 @@
 	explore programs), proof in numbers, and a free-counselling form right there.
 -->
 <script lang="ts">
-	import { Star, Check } from '@lucide/svelte';
+	import { Star, Check, BadgeCheck } from '@lucide/svelte';
 	import Button from '../Button.svelte';
 	import EnquiryForm from '../EnquiryForm.svelte';
-	import { stats, site } from '$lib/data/catalog';
+	import { stats, site, money, mentorProof } from '$lib/data/catalog';
 	import { modes } from '$lib/data/academy';
 	import { reveal, countUp } from '$lib/motion/actions';
 	import { enquiry } from '$lib/stores/enquiry.svelte';
@@ -24,8 +24,9 @@
 				Learn the skills<br />companies <em class="italic-accent">hire for.</em>
 			</h1>
 			<p class="sub" data-reveal>
-				Mentor-led programs in development, data, AI, design and marketing — live online, in the classroom or
-				both. Real projects, an industry-recognised certificate and career support until you’re job-ready.
+				Mentor-led programs in UI/UX design, front-end and full-stack development and AI — live online, in the
+				classroom or both. Real projects, a certificate and career support until you’re job-ready. Programs from
+				<strong class="from">{money(stats.fromPrice)}</strong>.
 			</p>
 			<div class="ctas" data-reveal>
 				<Button size="lg" arrow magnetic onclick={() => enquiry.show({ kind: 'demo' })}>Book a free demo</Button>
@@ -46,26 +47,45 @@
 			</div>
 			<EnquiryForm kind="counselling" size="compact" uid="hero" />
 			<p class="trust">
-				<span class="stars" aria-hidden="true">
-					{#each Array(5) as _, i (i)}<Star size={12} strokeWidth={0} fill="currentColor" />{/each}
-				</span>
-				<span><strong>{stats.rating.toFixed(1)}/5</strong> from {stats.reviews.toLocaleString(site.locale)} learner reviews</span>
+				{#if stats.hasRatings}
+					<span class="stars" aria-hidden="true">
+						{#each Array(5) as _, i (i)}<Star size={12} strokeWidth={0} fill="currentColor" />{/each}
+					</span>
+					<span><strong>{stats.rating.toFixed(1)}/5</strong> from {stats.reviews.toLocaleString(site.locale)} learner reviews</span>
+				{:else}
+					<span class="stars" aria-hidden="true"><BadgeCheck size={14} strokeWidth={2} /></span>
+					<span>Taught by a front-end architect with <strong>{mentorProof.years}+ years</strong> in industry</span>
+				{/if}
 			</p>
 		</aside>
 
 		<dl class="stats" data-reveal>
-			<div>
-				<dt>Learners trained</dt>
-				<dd class="t-num"><span use:countUp={{ to: learnersK, pad: 1 }}>0</span>k<small>+</small></dd>
-			</div>
+			{#if stats.hasLearners}
+				<div>
+					<dt>Learners trained</dt>
+					<dd class="t-num"><span use:countUp={{ to: learnersK, pad: 1 }}>0</span>k<small>+</small></dd>
+				</div>
+			{:else}
+				<div>
+					<dt>Years in industry</dt>
+					<dd class="t-num"><span use:countUp={{ to: mentorProof.years }}>00</span><small>+</small></dd>
+				</div>
+			{/if}
 			<div>
 				<dt>Career programs</dt>
 				<dd class="t-num"><span use:countUp={{ to: stats.programs }}>00</span></dd>
 			</div>
-			<div>
-				<dt>Average rating</dt>
-				<dd class="t-num">{stats.rating.toFixed(1)}<small>/5</small></dd>
-			</div>
+			{#if stats.hasRatings}
+				<div>
+					<dt>Average rating</dt>
+					<dd class="t-num">{stats.rating.toFixed(1)}<small>/5</small></dd>
+				</div>
+			{:else}
+				<div>
+					<dt>Programs from</dt>
+					<dd class="t-num">{money(stats.fromPrice)}</dd>
+				</div>
+			{/if}
 			<div>
 				<dt>Ways to learn</dt>
 				<dd class="modes">{modes.slice(0, 3).map((m) => m.title).join(' · ')}</dd>
@@ -117,6 +137,11 @@
 		font-size: clamp(1.02rem, 1.4vw, 1.15rem);
 		line-height: 1.65;
 		color: var(--text-secondary);
+	}
+	.sub .from {
+		color: var(--text-primary, var(--ink));
+		font-weight: 600;
+		white-space: nowrap;
 	}
 	.ctas {
 		display: flex;
